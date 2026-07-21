@@ -1,0 +1,35 @@
+package luisitobez.jjvh.basket.data.local.dao
+
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
+import luisitobez.jjvh.basket.data.local.entity.GameEntity
+
+@Dao
+interface GameDao {
+    @Insert
+    suspend fun insert(game: GameEntity): Long
+
+    @Update
+    suspend fun update(game: GameEntity)
+
+    @Query("SELECT * FROM game WHERE id = :gameId")
+    fun observeById(gameId: Long): Flow<GameEntity?>
+
+    @Query("SELECT * FROM game ORDER BY game_date DESC")
+    fun observeAll(): Flow<List<GameEntity>>
+
+    @Query(
+        """UPDATE game
+        SET current_period = :period, clock_seconds_remaining = :secondsRemaining, status = :status
+        WHERE id = :gameId"""
+    )
+    suspend fun updateGameClock(
+        gameId: Long, period: Int, secondsRemaining: Int?, status: String = "IN_PROGRESS"
+    )
+
+    @Query("UPDATE game SET status = 'FINISHED' WHERE id = :gameId")
+    suspend fun finish(gameId: Long)
+}
