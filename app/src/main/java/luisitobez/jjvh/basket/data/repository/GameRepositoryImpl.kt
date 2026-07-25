@@ -1,6 +1,5 @@
 package luisitobez.jjvh.basket.data.repository
 
-import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import luisitobez.jjvh.basket.data.Mapper.toDomain
@@ -8,6 +7,7 @@ import luisitobez.jjvh.basket.data.Mapper.toEntity
 import luisitobez.jjvh.basket.data.local.dao.GameDao
 import luisitobez.jjvh.basket.domain.model.gameModel
 import luisitobez.jjvh.basket.domain.repository.GameRepository
+import javax.inject.Inject
 
 class GameRepositoryImpl @Inject constructor(
     private val gameDao: GameDao
