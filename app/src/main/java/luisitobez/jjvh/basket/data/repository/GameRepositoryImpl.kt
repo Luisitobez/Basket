@@ -20,7 +20,7 @@ class GameRepositoryImpl(
         }
     }
 
-    override suspend fun getGames(): Flow<List<gameModel>> {
+    override fun getGames(): Flow<List<gameModel>> {
         try {
             return gameDao.observeAll().map { entities ->
                 entities.map { entity ->

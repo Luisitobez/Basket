@@ -5,6 +5,6 @@ import luisitobez.jjvh.basket.domain.model.gameModel
 
 interface GameRepository {
     suspend fun getGameById(id: Int): Flow<gameModel>
-    suspend fun getGames(): Flow<List<gameModel>>
+    fun getGames(): Flow<List<gameModel>>
     suspend fun putGame(game: gameModel): Flow<gameModel>
 }

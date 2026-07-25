@@ -7,7 +7,11 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 
 @Composable
-fun PrincipalScreen(onStartGame: () -> Unit, modifier: Modifier = Modifier) {
+fun PrincipalScreen(
+    viewModel: PrincipalViewModel = PrincipalViewModel(),
+    onStartGame: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Column(modifier = modifier) {
         Text("Pantalla Principal")
         Button(onClick = onStartGame) {
