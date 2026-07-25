@@ -6,8 +6,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import jakarta.inject.Singleton
 import luisitobez.jjvh.basket.data.local.dataBase.BasketballDatabase
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)

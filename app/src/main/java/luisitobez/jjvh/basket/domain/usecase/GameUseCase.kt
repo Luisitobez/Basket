@@ -1,6 +1,6 @@
 package luisitobez.jjvh.basket.domain.usecase
 
-import jakarta.inject.Inject
+import javax.inject.Inject
 import luisitobez.jjvh.basket.domain.model.gameModel
 import luisitobez.jjvh.basket.domain.repository.GameRepository
 

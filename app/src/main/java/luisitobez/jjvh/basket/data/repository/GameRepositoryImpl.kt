@@ -1,5 +1,6 @@
 package luisitobez.jjvh.basket.data.repository
 
+import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import luisitobez.jjvh.basket.data.Mapper.toDomain
@@ -8,7 +9,7 @@ import luisitobez.jjvh.basket.data.local.dao.GameDao
 import luisitobez.jjvh.basket.domain.model.gameModel
 import luisitobez.jjvh.basket.domain.repository.GameRepository
 
-class GameRepositoryImpl(
+class GameRepositoryImpl @Inject constructor(
     private val gameDao: GameDao
 ) : GameRepository {
     override suspend fun getGameById(id: Int): Flow<gameModel> {

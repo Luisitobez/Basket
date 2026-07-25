@@ -4,9 +4,9 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import jakarta.inject.Singleton
 import luisitobez.jjvh.basket.data.repository.GameRepositoryImpl
 import luisitobez.jjvh.basket.domain.repository.GameRepository
+import javax.inject.Singleton
 
 
 @Module
