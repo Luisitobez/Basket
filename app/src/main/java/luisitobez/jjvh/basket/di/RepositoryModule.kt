@@ -1,20 +1,27 @@
 package luisitobez.jjvh.basket.di
 
-import dagger.Provides
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import jakarta.inject.Singleton
-import luisitobez.jjvh.basket.data.local.dao.CompetitionDao
-import luisitobez.jjvh.basket.data.local.dao.GameDao
-import luisitobez.jjvh.basket.data.local.dao.GameRosterDao
+import luisitobez.jjvh.basket.data.repository.GameRepositoryImpl
+import luisitobez.jjvh.basket.domain.repository.GameRepository
 
-class RepositoryModule {
 
-    @Provides
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class RepositoryModule {
+
+    /*@Binds
     @Singleton
-    fun provideRepository(
-        competitionDao: CompetitionDao,
-        gameDao: GameDao,
-        gameRosterDao: GameRosterDao
-    ) {
+    abstract fun bindCompetitionRepository(
+        competitionRepositoryImpl: CompetitionRepositoryImpl
+    ): CompetitionRepository*/
 
-    }
+    @Binds
+    @Singleton
+    abstract fun bindGameRepository(
+        gameRepositoryImpl: GameRepositoryImpl
+    ): GameRepository
 }

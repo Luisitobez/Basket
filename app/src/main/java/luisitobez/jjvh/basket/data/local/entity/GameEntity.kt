@@ -8,11 +8,20 @@ import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "game",
-    foreignKeys = [
-        ForeignKey(entity = CompetitionEntity::class, parentColumns = ["id"], childColumns = ["competition_id"], onDelete = ForeignKey.SET_NULL),
-        ForeignKey(entity = TeamEntity::class, parentColumns = ["id"], childColumns = ["home_team_id"]),
-        ForeignKey(entity = TeamEntity::class, parentColumns = ["id"], childColumns = ["away_team_id"])
-    ],
+    foreignKeys = [ForeignKey(
+        entity = CompetitionEntity::class,
+        parentColumns = ["id"],
+        childColumns = ["competition_id"],
+        onDelete = ForeignKey.SET_NULL
+    ), ForeignKey(
+        entity = TeamEntity::class,
+        parentColumns = ["id"],
+        childColumns = ["home_team_id"]
+    ), ForeignKey(
+        entity = TeamEntity::class,
+        parentColumns = ["id"],
+        childColumns = ["away_team_id"]
+    )],
     indices = [Index("competition_id"), Index("home_team_id"), Index("away_team_id")]
 )
 data class GameEntity(
