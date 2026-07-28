@@ -5,14 +5,14 @@ import kotlinx.coroutines.flow.map
 import luisitobez.jjvh.basket.data.Mapper.toDomain
 import luisitobez.jjvh.basket.data.Mapper.toEntity
 import luisitobez.jjvh.basket.data.local.dao.GameDao
-import luisitobez.jjvh.basket.domain.model.gameModel
+import luisitobez.jjvh.basket.domain.model.GameModel
 import luisitobez.jjvh.basket.domain.repository.GameRepository
 import javax.inject.Inject
 
 class GameRepositoryImpl @Inject constructor(
     private val gameDao: GameDao
 ) : GameRepository {
-    override suspend fun getGameById(id: Int): Flow<gameModel> {
+    override fun getGameById(id: Int): Flow<GameModel> {
         try {
             return gameDao.observeById(id.toLong())
                 .map { it?.toDomain() ?: throw Exception("Game not found") }
@@ -21,7 +21,7 @@ class GameRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getGames(): Flow<List<gameModel>> {
+    override fun getGames(): Flow<List<GameModel>> {
         try {
             return gameDao.observeAll().map { entities ->
                 entities.map { entity ->
@@ -33,7 +33,7 @@ class GameRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun putGame(game: gameModel): Flow<gameModel> {
+    override suspend fun putGame(game: GameModel): Flow<GameModel> {
         return try {
             val gameEntity = game.toEntity()
             val gameId = gameDao.insert(gameEntity)

@@ -1,4 +1,4 @@
-package luisitobez.jjvh.basket.ui.Screen.Principal
+package luisitobez.jjvh.basket.ui.Screen.Team
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,13 +10,11 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PrincipalScreen(
-    viewModel: PrincipalViewModel = hiltViewModel(),
-    onStartGame: () -> Unit,
-    modifier: Modifier = Modifier,
-    onNavigateToGame: () -> Boolean
+fun TeamScreen(
+    viewModel: TeamViewModel = hiltViewModel(),
+    onAddTeamClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -25,20 +23,17 @@ fun PrincipalScreen(
         modifier = modifier
     ) {
         item {
-            Column {
-                AddGameCard(
-                    onClick = onStartGame
-                )
-            }
-        }
-        items(
-            items = uiState.games
-        ) { game ->
-            GameCard(
-                onClick = { /*TODO*/ },
-                homeTeam = game.status,
-                awayTeam = "dadas"
+            AddTeamCard(
+                onClick = {
+                    onAddTeamClick()
+                }
             )
+        }
+        items(items = uiState.teams) { team ->
+            TeamCard(
+                teamName = team.name,
+                teamShortName = team.shortName ?: "Null",
+                onClick = { /* Handle team click */ })
         }
     }
 }

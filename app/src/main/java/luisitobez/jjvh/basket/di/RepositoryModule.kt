@@ -5,7 +5,9 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import luisitobez.jjvh.basket.data.repository.GameRepositoryImpl
+import luisitobez.jjvh.basket.data.repository.TeamRepositoryImpl
 import luisitobez.jjvh.basket.domain.repository.GameRepository
+import luisitobez.jjvh.basket.domain.repository.TeamRepository
 import javax.inject.Singleton
 
 
@@ -24,4 +26,10 @@ abstract class RepositoryModule {
     abstract fun bindGameRepository(
         gameRepositoryImpl: GameRepositoryImpl
     ): GameRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindTeamRepository(
+        teamRepositoryImpl: TeamRepositoryImpl
+    ): TeamRepository
 }

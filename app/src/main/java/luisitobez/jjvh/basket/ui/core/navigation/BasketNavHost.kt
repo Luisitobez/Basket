@@ -1,18 +1,26 @@
 package luisitobez.jjvh.basket.ui.core.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntry
-import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.ui.NavDisplay
+import luisitobez.jjvh.basket.ui.Screen.AddGame.AddGameScreen
+import luisitobez.jjvh.basket.ui.Screen.AddTeam.AddTeamScreen
 import luisitobez.jjvh.basket.ui.Screen.Game.GameScreen
 import luisitobez.jjvh.basket.ui.Screen.Principal.PrincipalScreen
+import luisitobez.jjvh.basket.ui.Screen.Team.TeamScreen
 
+@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
 fun BasketNavHost(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    backStack: NavBackStack<NavKey>,
 ) {
-    val backStack = rememberNavBackStack(Principal)
+
 
     NavDisplay(
         backStack = backStack,
@@ -26,15 +34,49 @@ fun BasketNavHost(
                 Principal -> NavEntry(route) {
                     PrincipalScreen(
                         onStartGame = {
+                            backStack.add(AddGame)
+                        },
+                        modifier = modifier,
+                        onNavigateToGame = {
                             backStack.add(Game)
+                        },
+                    )
+                }
+
+                Game -> NavEntry(route) {
+                    GameScreen(
+                        modifier = modifier,
+                        id = 0
+                    )
+                }
+
+                Team -> NavEntry(route) {
+                    TeamScreen(
+                        modifier = modifier,
+                        onAddTeamClick = {
+                            backStack.add(AddTeam)
+                        }
+                    )
+                }
+
+                AddTeam -> NavEntry(route) {
+                    AddTeamScreen(
+                        onback = {
+                            backStack.removeLast()
                         },
                         modifier = modifier
                     )
                 }
 
-                Game -> NavEntry(route) {
-                    GameScreen()
+                AddGame -> NavEntry(route) {
+                    AddGameScreen(
+                        onAddGameClick = {
+                            backStack.removeLast()
+                        },
+                        modifier = modifier
+                    )
                 }
+
 
                 else -> error("Ruta no reconocida: $route")
             }

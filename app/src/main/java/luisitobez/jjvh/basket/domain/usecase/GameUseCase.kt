@@ -1,19 +1,23 @@
 package luisitobez.jjvh.basket.domain.usecase
 
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
-import luisitobez.jjvh.basket.domain.model.gameModel
+import luisitobez.jjvh.basket.domain.model.GameModel
 import luisitobez.jjvh.basket.domain.repository.GameRepository
 
 class GameUseCase @Inject constructor(
     private val gameRepository: GameRepository
 ) {
-    suspend fun getGameByxId(id: Int) {
-        gameRepository.getGameById(id)
+
+    fun getGameById(id: Int): Flow<GameModel?> {
+        return gameRepository.getGameById(id)
     }
-    operator fun invoke() {
-        gameRepository.getGames()
+
+    fun getGames(): Flow<List<GameModel>> {
+        return gameRepository.getGames()
     }
-    suspend fun putGame(game: gameModel){
+
+    suspend fun putGame(game: GameModel) {
         gameRepository.putGame(game)
     }
 }

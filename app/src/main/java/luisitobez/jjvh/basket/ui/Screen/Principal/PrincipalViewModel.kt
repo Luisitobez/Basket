@@ -3,11 +3,12 @@ package luisitobez.jjvh.basket.ui.Screen.Principal
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import luisitobez.jjvh.basket.domain.model.gameModel
+import luisitobez.jjvh.basket.domain.model.GameModel
 import luisitobez.jjvh.basket.domain.usecase.GameUseCase
 import javax.inject.Inject
 
@@ -17,26 +18,36 @@ class PrincipalViewModel @Inject constructor(
 ): ViewModel() {
 
     val _uiState = MutableStateFlow(GameUiState())
-    val uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
+    val uiState: StateFlow<GameUiState> = _uiState
 
-
-    suspend fun getGameById(id: Int) {
+    init {
         viewModelScope.launch {
-            _uiState.value = GameUiState(game = gameUseCase.getGameByxId(id))
+            gameUseCase.getGames().collect { games ->
+                _uiState.value = _uiState.value.copy(
+                    games = games
+                )
+            }
         }
-
     }
 
-    fun getGames() {
-        gameUseCase.invoke()
+    fun getGameById(id: Int) {
+        viewModelScope.launch {
+            gameUseCase.getGameById(id).collect { game ->
+                _uiState.value = _uiState.value.copy(
+                    game = game
+                )
+            }
+        }
     }
 
-    suspend fun putGame(game: gameModel) {
+
+
+    suspend fun putGame(game: GameModel) {
         gameUseCase.putGame(game)
     }
 }
 
 data class GameUiState(
-    val game: gameModel? = null,
-    val games: List<gameModel>? = null
+    val game: GameModel? = null,
+    val games: List<GameModel> = emptyList()
 )

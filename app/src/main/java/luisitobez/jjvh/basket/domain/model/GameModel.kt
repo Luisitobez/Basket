@@ -1,6 +1,6 @@
 package luisitobez.jjvh.basket.domain.model
 
-data class gameModel(
+data class GameModel(
     val id: Long,
     val competitionId: Long?,
     val homeTeamId: Long,

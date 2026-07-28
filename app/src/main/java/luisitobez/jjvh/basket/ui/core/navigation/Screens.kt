@@ -12,3 +12,10 @@ data object Principal : BasketRoute
 
 @Serializable
 data object Game : BasketRoute
+
+@Serializable
+data object Team : BasketRoute
+
+data object AddTeam : BasketRoute
+
+data object AddGame : BasketRoute

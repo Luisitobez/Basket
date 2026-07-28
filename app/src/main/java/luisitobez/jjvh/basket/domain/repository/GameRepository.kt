@@ -1,10 +1,10 @@
 package luisitobez.jjvh.basket.domain.repository
 
 import kotlinx.coroutines.flow.Flow
-import luisitobez.jjvh.basket.domain.model.gameModel
+import luisitobez.jjvh.basket.domain.model.GameModel
 
 interface GameRepository {
-    suspend fun getGameById(id: Int): Flow<gameModel>
-    fun getGames(): Flow<List<gameModel>>
-    suspend fun putGame(game: gameModel): Flow<gameModel>
+    fun getGameById(id: Int): Flow<GameModel>
+    fun getGames(): Flow<List<GameModel>>
+    suspend fun putGame(game: GameModel): Flow<GameModel>
 }
