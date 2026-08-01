@@ -1,6 +1,7 @@
 package luisitobez.jjvh.basket.ui.Screen.AddTeam
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,7 +21,11 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import luisitobez.jjvh.basket.ui.theme.AppBorderButtonShape
+import luisitobez.jjvh.basket.ui.theme.AppBorderShape
 import luisitobez.jjvh.basket.ui.theme.AppButtonColors
+import luisitobez.jjvh.basket.ui.theme.AppModifierButton
+import luisitobez.jjvh.basket.ui.theme.AppModifierCard
 import luisitobez.jjvh.basket.ui.theme.AppTextFieldColors
 
 @Composable
@@ -40,14 +45,15 @@ fun AddTeamScreen(
                 text = "Ingrese el nombre",
                 fontStyle = FontStyle.Italic,
                 fontSize = 20.sp,
-                modifier = Modifier.padding(start = 16.dp, top = 8.dp)
+                modifier = Modifier.padding(start = 16.dp, top = 8.dp),
             )
             TextField(
                 value = uiState.value.name,
                 onValueChange = { viewModel.onChangeName(it) },
                 label = { Text("Nombre del equipo") },
                 modifier = Modifier.fillMaxWidth().padding(8.dp),
-                colors = AppTextFieldColors.default()
+                colors = AppTextFieldColors.default(),
+                singleLine = true
             )
 
             Text(
@@ -61,21 +67,15 @@ fun AddTeamScreen(
                 onValueChange = { viewModel.onChangeShortName(it) },
                 modifier = Modifier.fillMaxWidth().padding(8.dp),
                 label = { Text("Nombre corto del equipo") },
-                colors = AppTextFieldColors.default()
+                colors = AppTextFieldColors.default(),
+                singleLine = true
             )
 
             Button(
                 onClick = { viewModel.putTeam(onback) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .border(
-                        width = 2.dp,
-                        color = Color(0xFFF9A825),
-                        shape = RoundedCornerShape(8.dp)
-                    ),
+                modifier = AppModifierButton.default(),
                 colors = AppButtonColors.default(),
-                shape = RoundedCornerShape(8.dp)
+                shape = AppBorderShape.default()
             ){
                 Text(text = "Agregar equipo")
             }

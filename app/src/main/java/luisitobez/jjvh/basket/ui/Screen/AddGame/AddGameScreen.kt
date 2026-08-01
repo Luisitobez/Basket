@@ -6,16 +6,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -28,7 +24,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import luisitobez.jjvh.basket.ui.Screen.Principal.AddGameCard
+import luisitobez.jjvh.basket.ui.theme.AppBorderShape
+import luisitobez.jjvh.basket.ui.theme.AppButtonColors
+import luisitobez.jjvh.basket.ui.theme.AppModifierButton
+import luisitobez.jjvh.basket.ui.theme.AppTextFieldColors
+import luisitobez.jjvh.basket.ui.theme.ShapeCardColor
 import java.time.Instant
 import java.time.ZoneId
 
@@ -84,7 +84,7 @@ fun AddGameScreen(
 
                     onTeamSelected = { teamId ->
                         viewModel.onChangeHomeTeamId(teamId)
-                    }
+                    },
                 )
             }
 
@@ -125,7 +125,20 @@ fun AddGameScreen(
                 label = {
                     Text("Lugar")
                 },
-                modifier = Modifier.fillMaxWidth().padding(16.dp)
+                placeholder = {
+                    Text("Ingrese lugar")
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                colors = AppTextFieldColors.default(),
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.LocationOn,
+                        contentDescription = null,
+                        tint = ShapeCardColor
+                    )
+                }
             )
 
             Box(
@@ -231,7 +244,10 @@ fun AddGameScreen(
                 label = {
                     Text("Notas")
                 },
-                modifier = Modifier.fillMaxWidth().padding(16.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                colors = AppTextFieldColors.default()
             )
 
             Button(
@@ -239,7 +255,9 @@ fun AddGameScreen(
                     viewModel.onClickeAddGame()
                     onAddGameClick()
                 },
-                modifier = Modifier.padding(16.dp)
+                modifier = AppModifierButton.default(),
+                shape = AppBorderShape.default(),
+                colors = AppButtonColors.default()
             ) {
                 Text(text = "Agregar juego")
             }

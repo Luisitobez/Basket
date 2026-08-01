@@ -12,7 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import luisitobez.jjvh.basket.ui.theme.AppBorderShape
 import luisitobez.jjvh.basket.ui.theme.AppCardColors
+import luisitobez.jjvh.basket.ui.theme.AppModifierCard
 import luisitobez.jjvh.basket.ui.theme.ShapeCardColor
 
 @Composable
@@ -21,12 +23,8 @@ fun AddTeamCard(
 ) {
     Card(
         onClick = onClick,
-        modifier = Modifier.padding(8.dp).fillMaxWidth().border(
-            width = 2.dp,
-            color = ShapeCardColor,
-            shape = RoundedCornerShape(8.dp)
-        ),
-        shape = RoundedCornerShape(8.dp),
+        modifier = AppModifierCard.default(),
+        shape = AppBorderShape.default(),
         colors = AppCardColors.default()
     ) {
         Text(

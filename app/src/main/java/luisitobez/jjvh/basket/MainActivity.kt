@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -28,15 +29,23 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.rememberNavBackStack
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import luisitobez.jjvh.basket.ui.core.navigation.BasketNavHost
-import luisitobez.jjvh.basket.ui.core.navigation.Game
 import luisitobez.jjvh.basket.ui.core.navigation.Principal
 import luisitobez.jjvh.basket.ui.core.navigation.Team
 import luisitobez.jjvh.basket.ui.theme.BasketTheme
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import luisitobez.jjvh.basket.ui.theme.BackGroundColor
+import luisitobez.jjvh.basket.ui.theme.ContainerColor
+import luisitobez.jjvh.basket.ui.theme.ShapeCardColor
+import luisitobez.jjvh.basket.ui.theme.SurfacaColor
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -126,7 +135,7 @@ class MainActivity : ComponentActivity() {
                         topBar = {
                             TopAppBar(
                                 colors = TopAppBarDefaults.topAppBarColors(
-                                    containerColor = Color.Blue
+                                    containerColor = ContainerColor
                                 ),
                                 navigationIcon = {
                                     IconButton(onClick = {
@@ -137,7 +146,7 @@ class MainActivity : ComponentActivity() {
                                         Icon(
                                             imageVector = Icons.Default.DensityMedium,
                                             contentDescription = "Exit",
-                                            tint = Color.White
+                                            tint = ShapeCardColor
                                         )
                                     }
                                 },
@@ -145,10 +154,24 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                     ) { innerPadding ->
-                        BasketNavHost(
-                            modifier = Modifier.padding(innerPadding),
-                            backStack = backStack
-                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(innerPadding)
+                                .background(BackGroundColor),
+                        ){
+                            Image(
+                                painter = painterResource(R.drawable._2e85756f633b9787afd437d1c680b75d),
+                                contentDescription = null,
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop,
+                                alpha = 0.2f
+                            )
+                            BasketNavHost(
+                                modifier = Modifier.fillMaxSize(),
+                                backStack = backStack
+                            )
+                        }
                     }
                 }
             }
