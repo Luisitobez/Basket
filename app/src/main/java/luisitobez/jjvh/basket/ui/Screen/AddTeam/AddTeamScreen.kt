@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -18,6 +19,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -26,6 +28,7 @@ import luisitobez.jjvh.basket.ui.theme.AppBorderShape
 import luisitobez.jjvh.basket.ui.theme.AppButtonColors
 import luisitobez.jjvh.basket.ui.theme.AppModifierButton
 import luisitobez.jjvh.basket.ui.theme.AppModifierCard
+import luisitobez.jjvh.basket.ui.theme.AppShapeButton
 import luisitobez.jjvh.basket.ui.theme.AppTextFieldColors
 
 @Composable
@@ -41,42 +44,49 @@ fun AddTeamScreen(
         modifier = modifier,
     ) {
         item {
+
             Text(
-                text = "Ingrese el nombre",
-                fontStyle = FontStyle.Italic,
-                fontSize = 20.sp,
-                modifier = Modifier.padding(start = 16.dp, top = 8.dp),
+                text = "NOMBRE DEL EQUIPO",
+                modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp),
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Bold
             )
-            TextField(
+            OutlinedTextField(
                 value = uiState.value.name,
                 onValueChange = { viewModel.onChangeName(it) },
                 label = { Text("Nombre del equipo") },
-                modifier = Modifier.fillMaxWidth().padding(8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp, 0.dp, 16.dp, 16.dp),
                 colors = AppTextFieldColors.default(),
-                singleLine = true
+                singleLine = true,
+                shape = AppBorderShape.default()
             )
 
             Text(
-                text = "Ingrese el nombre corto",
-                modifier = Modifier.padding(start = 16.dp, top = 8.dp),
-                fontStyle = FontStyle.Italic,
-                fontSize = 20.sp,
+                text = "ABREVIATURA DEL EQUIPO",
+                modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp),
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Bold
             )
-            TextField(
+            OutlinedTextField(
                 value = uiState.value.shortName,
                 onValueChange = { viewModel.onChangeShortName(it) },
-                modifier = Modifier.fillMaxWidth().padding(8.dp),
-                label = { Text("Nombre corto del equipo") },
+                label = { Text("Abreviatura del equipo") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp, 0.dp, 16.dp, 16.dp),
                 colors = AppTextFieldColors.default(),
-                singleLine = true
+                singleLine = true,
+                shape = AppBorderShape.default()
             )
 
             Button(
                 onClick = { viewModel.putTeam(onback) },
                 modifier = AppModifierButton.default(),
-                colors = AppButtonColors.default(),
-                shape = AppBorderShape.default()
-            ){
+                shape = AppShapeButton.default(),
+                colors = AppButtonColors.default()
+            ) {
                 Text(text = "Agregar equipo")
             }
         }

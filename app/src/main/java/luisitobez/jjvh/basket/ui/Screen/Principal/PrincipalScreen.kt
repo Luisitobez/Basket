@@ -36,8 +36,10 @@ fun PrincipalScreen(
         ) { game ->
             GameCard(
                 onClick = { /*TODO*/ },
-                homeTeam = game.status,
-                awayTeam = "dadas"
+                homeTeam = uiState.teams.firstOrNull { it.id == game.homeTeamId }?.name ?: "Equipo Local",
+                awayTeam = uiState.teams.firstOrNull { it.id == game.awayTeamId }?.name ?: "Equipo Visitante",
+                fecha = game.gameDate,
+                lugar = game.venue ?: "Canchas"
             )
         }
     }

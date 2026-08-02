@@ -3,18 +3,19 @@ package luisitobez.jjvh.basket.ui.Screen.Principal
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import luisitobez.jjvh.basket.domain.model.GameModel
+import luisitobez.jjvh.basket.domain.model.TeamModel
 import luisitobez.jjvh.basket.domain.usecase.GameUseCase
+import luisitobez.jjvh.basket.domain.usecase.TeamUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class PrincipalViewModel @Inject constructor(
-    private val gameUseCase: GameUseCase
+    private val gameUseCase: GameUseCase,
+    private val teamUseCase: TeamUseCase
 ): ViewModel() {
 
     val _uiState = MutableStateFlow(GameUiState())
@@ -40,6 +41,15 @@ class PrincipalViewModel @Inject constructor(
         }
     }
 
+    fun getTeams() {
+        viewModelScope.launch {
+            teamUseCase.getTeams().collect { teams ->
+                _uiState.value = _uiState.value.copy(
+                    teams = teams
+                )
+            }
+        }
+    }
 
 
     suspend fun putGame(game: GameModel) {
@@ -49,5 +59,6 @@ class PrincipalViewModel @Inject constructor(
 
 data class GameUiState(
     val game: GameModel? = null,
-    val games: List<GameModel> = emptyList()
+    val games: List<GameModel> = emptyList(),
+    val teams: List<TeamModel> = emptyList()
 )

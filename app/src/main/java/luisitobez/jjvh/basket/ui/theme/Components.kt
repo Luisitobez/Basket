@@ -19,19 +19,21 @@ object AppTextFieldColors {
     @Composable
     fun default(): TextFieldColors {
         return TextFieldDefaults.colors(
-            focusedTextColor = Color.White,
-            unfocusedTextColor = Color.DarkGray,
-
-            focusedContainerColor = Color(0x55F9A825),
-            unfocusedContainerColor = Color(0x55F9A825),
-
-            focusedIndicatorColor = Color.Blue,
-            unfocusedIndicatorColor = Color.DarkGray,
-
-            focusedLabelColor = Color.Blue,
-            unfocusedLabelColor = Color.DarkGray,
-
-            cursorColor = Color.Blue
+            focusedTextColor = AppTextPrimary,
+            unfocusedTextColor = AppTextPrimary,
+            focusedContainerColor = AppSurface.copy(alpha = 0.55f),
+            unfocusedContainerColor = AppSurface.copy(alpha = 0.55f),
+            focusedIndicatorColor = PrimaryOrange,
+            unfocusedIndicatorColor = PrimaryOrange,
+            focusedLabelColor = AppTextSecondary,
+            unfocusedLabelColor = AppTextSecondary,
+            cursorColor = PrimaryOrange,
+            focusedLeadingIconColor = PrimaryOrange,
+            unfocusedLeadingIconColor = PrimaryOrange,
+            focusedTrailingIconColor = PrimaryOrange,
+            unfocusedTrailingIconColor = PrimaryOrange,
+            focusedPlaceholderColor = AppTextSecondary,
+            unfocusedPlaceholderColor = AppTextSecondary
         )
     }
 }
@@ -40,8 +42,8 @@ object AppButtonColors {
     @Composable
     fun default(): ButtonColors {
         return ButtonDefaults.buttonColors(
-            containerColor = ContainerColor,
-            contentColor = Color.White
+            containerColor = PrimaryBlue,
+            contentColor = AppTextPrimary
         )
     }
 }
@@ -50,7 +52,7 @@ object AppCardColors {
     @Composable
     fun default(): CardColors {
         return CardDefaults.cardColors(
-            containerColor = ContainerColor,
+            containerColor = AppSurface,
         )
     }
 }
@@ -58,7 +60,23 @@ object AppCardColors {
 object AppBorderShape {
     @Composable
     fun default(): RoundedCornerShape {
-        return RoundedCornerShape(15.dp, 50.dp, 15.dp, 50.dp)
+        return RoundedCornerShape(16.dp)
+    }
+    @Composable
+    fun small(): RoundedCornerShape {
+        return RoundedCornerShape(4.dp)
+    }
+}
+
+object AppShapeButton {
+    @Composable
+    fun default(): RoundedCornerShape {
+        return RoundedCornerShape(
+            8.dp,
+            24.dp,
+            8.dp,
+            24.dp
+        )
     }
 }
 
@@ -69,8 +87,8 @@ object AppModifierCard {
             .padding(8.dp)
             .fillMaxWidth()
             .border(
-                width = 2.dp,
-                color = ShapeCardColor,
+                width = 1.dp,
+                color = AppBorder,
                 shape = AppBorderShape.default()
             )
     }
@@ -81,8 +99,8 @@ object AppBorderButtonShape {
     fun default(): Modifier {
         return Modifier.border(
             width = 2.dp,
-            color = Color(0xFFF9A825),
-            shape = AppBorderShape.default()
+            color = PrimaryOrange,
+            shape = AppShapeButton.default()
         )
     }
 }
@@ -101,9 +119,9 @@ object AppModifierTextFieldShape {
     @Composable
     fun default(): Modifier {
         return Modifier.border(
-            width = 2.dp,
-            color = Color(0xFFF9A825),
-            shape = RoundedCornerShape(8.dp)
+            width = 1.dp,
+            color = PrimaryOrange,
+            shape = AppBorderShape.default()
         )
     }
 }

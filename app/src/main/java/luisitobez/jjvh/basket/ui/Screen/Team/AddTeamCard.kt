@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.dp
 import luisitobez.jjvh.basket.ui.theme.AppBorderShape
 import luisitobez.jjvh.basket.ui.theme.AppCardColors
 import luisitobez.jjvh.basket.ui.theme.AppModifierCard
-import luisitobez.jjvh.basket.ui.theme.ShapeCardColor
 
 @Composable
 fun AddTeamCard(

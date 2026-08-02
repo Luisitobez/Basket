@@ -31,4 +31,8 @@ class TeamUseCase @Inject constructor(
 
         return false
     }
+
+    suspend fun getNameByTeamId(id: Int): String {
+        return teamRepository.getTeamById(id).name
+    }
 }
