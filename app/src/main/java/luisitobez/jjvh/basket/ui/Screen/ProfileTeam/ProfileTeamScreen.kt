@@ -39,7 +39,7 @@ fun ProfileTeamScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(key1 = Unit) {
+    LaunchedEffect(id) {
         viewModel.getTeamById(id)
         viewModel.getGamesByTeamId(id)
     }

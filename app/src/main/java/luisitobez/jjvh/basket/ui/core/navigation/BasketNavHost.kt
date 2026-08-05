@@ -19,17 +19,13 @@ import luisitobez.jjvh.basket.ui.Screen.Team.TeamScreen
 @Composable
 fun BasketNavHost(
     modifier: Modifier = Modifier,
-    backStack: NavBackStack<NavKey>,
+    backStack: MutableList<Any>,
 ) {
 
 
     NavDisplay(
         backStack = backStack,
-        onBack = {
-            if (backStack.size > 1) {
-                backStack.removeLast()
-            }
-        },
+        onBack = { backStack.removeLastOrNull() },
         entryProvider = { route ->
             when (route) {
                 Principal -> NavEntry(route) {
@@ -58,7 +54,11 @@ fun BasketNavHost(
                             backStack.add(AddTeam)
                         },
                         onTeamClick = { id ->
-                            backStack.add(ProfileTeam(id = id))
+                            // eliminar ProfileTeam anterior si existe arriba, para no acumular estados
+                            while (backStack.lastOrNull() is ProfileTeam) {
+                                backStack.removeLast()
+                            }
+                            backStack.add(ProfileTeam(id))
                         }
                     )
                 }
@@ -88,6 +88,7 @@ fun BasketNavHost(
                             backStack.removeLast()
                         }
                     )
+                    print(backStack)
                 }
 
 

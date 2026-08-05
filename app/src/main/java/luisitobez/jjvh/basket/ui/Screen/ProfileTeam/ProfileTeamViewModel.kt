@@ -1,5 +1,6 @@
 package luisitobez.jjvh.basket.ui.Screen.ProfileTeam
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -154,25 +155,48 @@ class ProfileTeamViewModel @Inject constructor(
         }
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        Log.d("ProfileTeamViewModel", "onCleared")
+    }
+
 
     fun getGamesByTeamId(teamId: Int) {
         viewModelScope.launch {
+            _uiState.update {
+                it.copy(
+                    isLoading = true,
+                    error = null
+                )
+            }
+
             try {
-                _uiState.update { it.copy(isLoading = true, error = null) }
-                gameUseCase.getGamesByTeamId(teamId).collect { games ->
+                gameUseCase.getGamesByTeamId(teamId)
+                    .collect { games ->
 
-                    _uiState.update {
-                        it.copy(
-                            listGame = games
-                        )
+                        val teams = uiState.value.listTeams.toMutableMap()
+
+                        games.forEach { game ->
+                            if (!teams.containsKey(game.homeTeamId.toInt())) {
+                                teams[game.homeTeamId.toInt()] =
+                                    teamUseCase.getTeamById(game.homeTeamId.toInt()).name
+                            }
+
+                            if (!teams.containsKey(game.awayTeamId.toInt())) {
+                                teams[game.awayTeamId.toInt()] =
+                                    teamUseCase.getTeamById(game.awayTeamId.toInt()).name
+                            }
+                        }
+
+                        _uiState.update {
+                            it.copy(
+                                listGame = games,
+                                listTeams = teams,
+                                isLoading = false
+                            )
+                        }
                     }
 
-                    games.forEach { game ->
-                        getNameTeamById(game.homeTeamId.toInt())
-                        getNameTeamById(game.awayTeamId.toInt())
-                    }
-                }
-                _uiState.update { it.copy(isLoading = false, error = null) }
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(
@@ -180,10 +204,6 @@ class ProfileTeamViewModel @Inject constructor(
                         error = e.message ?: "Error desconocido"
                     )
                 }
-            }
-            for (game in uiState.value.listGame) {
-                getNameTeamById(game.homeTeamId.toInt())
-                getNameTeamById(game.awayTeamId.toInt())
             }
         }
     }
