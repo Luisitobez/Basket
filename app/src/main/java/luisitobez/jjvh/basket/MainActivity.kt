@@ -71,8 +71,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val backStack = rememberNavBackStack(Principal)
-
             BasketTheme {
                 val drawerState = rememberDrawerState(
                     initialValue = DrawerValue.Closed
