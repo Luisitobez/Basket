@@ -29,6 +29,7 @@ class PrincipalViewModel @Inject constructor(
                 )
             }
         }
+        getTeams()
     }
 
     fun getGameById(id: Int) {

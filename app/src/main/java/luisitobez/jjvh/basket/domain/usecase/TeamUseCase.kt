@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class TeamUseCase @Inject constructor(
     private val teamRepository: TeamRepository
-){
+) {
     suspend fun getTeamById(id: Int): TeamModel {
         return teamRepository.getTeamById(id)
     }
@@ -16,7 +16,7 @@ class TeamUseCase @Inject constructor(
         return teamRepository.getTeams()
     }
 
-    suspend fun putTeam(name : String, shortName: String, uri: String): Boolean {
+    suspend fun putTeam(name: String, shortName: String, uri: String): Boolean {
         val team = TeamModel(
             id = 0,
             name = name,
@@ -24,7 +24,7 @@ class TeamUseCase @Inject constructor(
             logoUri = uri
         )
 
-        if(!(name.isBlank() || shortName.isBlank())){
+        if (!(name.isBlank() || shortName.isBlank())) {
             teamRepository.putTeam(team)
             return true
         }
@@ -32,7 +32,32 @@ class TeamUseCase @Inject constructor(
         return false
     }
 
+    suspend fun updateTeam(id: Int, name: String, shortName: String, uri: String): Boolean {
+        val team = TeamModel(
+            id = id.toLong(),
+            name = name,
+            shortName = shortName,
+            logoUri = uri
+        )
+        return teamRepository.updateTeam(team)
+    }
+
     suspend fun getNameByTeamId(id: Int): String {
         return teamRepository.getTeamById(id).name
+    }
+
+    suspend fun deleteTeam(
+        id: Int,
+        name: String,
+        shortName: String,
+        uri: String
+    ): Boolean {
+        val team = TeamModel(
+            id = id.toLong(),
+            name = name,
+            shortName = shortName,
+            logoUri = uri
+        )
+        return teamRepository.deleteTeam(team)
     }
 }

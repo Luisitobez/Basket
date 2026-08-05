@@ -109,7 +109,8 @@ class AddGameViewModel @Inject constructor(
 
     fun onChangeDatePickerState(datePickerState: String) {
         _uiState.value = _uiState.value.copy(
-            datePickerState = datePickerState
+            datePickerState = datePickerState,
+            gameDate = datePickerState
         )
     }
 

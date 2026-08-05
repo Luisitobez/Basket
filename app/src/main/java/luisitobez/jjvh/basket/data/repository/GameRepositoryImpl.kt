@@ -42,4 +42,25 @@ class GameRepositoryImpl @Inject constructor(
             throw Exception("Failed to insert game")
         }
     }
+
+    override fun getGamesByTeamId(teamId: Int): Flow<List<GameModel>> {
+        try {
+            return gameDao.observeByTeamId(teamId.toLong()).map { entities ->
+                entities.map { entity ->
+                    entity.toDomain()
+                }
+            }
+        } catch (e: Exception) {
+            throw Exception("Games not found")
+        }
+    }
+
+    override suspend fun deleteGame(game: GameModel): Boolean {
+        return try {
+            val rowsDeleted = gameDao.delete(game.toEntity())
+            rowsDeleted > 0
+        } catch (e: Exception) {
+            throw Exception("Failed to delete game", e)
+        }
+    }
 }

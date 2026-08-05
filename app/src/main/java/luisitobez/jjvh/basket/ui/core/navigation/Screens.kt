@@ -16,6 +16,13 @@ data object Game : BasketRoute
 @Serializable
 data object Team : BasketRoute
 
+@Serializable
 data object AddTeam : BasketRoute
 
+@Serializable
 data object AddGame : BasketRoute
+
+@Serializable
+data class ProfileTeam(
+    val id: Int
+) : BasketRoute

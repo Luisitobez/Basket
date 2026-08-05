@@ -16,6 +16,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
@@ -38,7 +39,7 @@ fun AddTeamScreen(
     viewModel: AddTeamViewModel = hiltViewModel(),
 ) {
 
-    val uiState = viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
     LazyColumn(
         modifier = modifier,
@@ -52,7 +53,7 @@ fun AddTeamScreen(
                 fontWeight = FontWeight.Bold
             )
             OutlinedTextField(
-                value = uiState.value.name,
+                value = uiState.name,
                 onValueChange = { viewModel.onChangeName(it) },
                 label = { Text("Nombre del equipo") },
                 modifier = Modifier
@@ -70,7 +71,7 @@ fun AddTeamScreen(
                 fontWeight = FontWeight.Bold
             )
             OutlinedTextField(
-                value = uiState.value.shortName,
+                value = uiState.shortName,
                 onValueChange = { viewModel.onChangeShortName(it) },
                 label = { Text("Abreviatura del equipo") },
                 modifier = Modifier

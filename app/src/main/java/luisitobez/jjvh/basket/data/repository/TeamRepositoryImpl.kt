@@ -35,4 +35,30 @@ class TeamRepositoryImpl @Inject constructor(
 
     }
 
+    override suspend fun updateTeam(team: TeamModel): Boolean {
+        return try {
+            val teamEntity = team.toEntity()
+            val rowsUpdated = teamDao.update(teamEntity.id, teamEntity.name, teamEntity.shortName ?: "", teamEntity.logoUri ?: "")
+            rowsUpdated > 0
+        } catch (e: Exception) {
+            throw Exception("Failed to update team")
+        }
+    }
+
+    override suspend fun deleteTeam(team: TeamModel): Boolean {
+        return try {
+            val rowsDeleted = teamDao.delete(team.toEntity())
+            rowsDeleted > 0
+        } catch (e: Exception) {
+            throw Exception("Failed to delete team", e)
+        }
+    }
+
+    override suspend fun getTeamsMap(): Flow<Map<Int, String>> {
+        return teamDao.observeAll().map { entities ->
+            entities.map { entity ->
+                entity.id.toInt() to entity.name
+            }.toMap()
+        }
+    }
 }

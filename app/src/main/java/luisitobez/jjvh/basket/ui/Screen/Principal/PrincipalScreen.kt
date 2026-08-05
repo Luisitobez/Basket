@@ -21,6 +21,7 @@ fun PrincipalScreen(
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+
     LazyColumn(
         modifier = modifier
     ) {

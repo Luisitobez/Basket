@@ -1,6 +1,7 @@
 package luisitobez.jjvh.basket.data.local.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
@@ -32,4 +33,10 @@ interface GameDao {
 
     @Query("UPDATE game SET status = 'FINISHED' WHERE id = :gameId")
     suspend fun finish(gameId: Long)
+
+    @Query("SELECT * FROM game WHERE home_team_id = :teamId OR away_team_id = :teamId ORDER BY game_date DESC")
+    fun observeByTeamId(teamId: Long): Flow<List<GameEntity>>
+
+    @Delete(entity = GameEntity::class)
+    suspend fun delete(game: GameEntity): Int
 }

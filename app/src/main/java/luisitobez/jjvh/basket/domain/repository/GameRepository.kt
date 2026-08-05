@@ -7,4 +7,7 @@ interface GameRepository {
     fun getGameById(id: Int): Flow<GameModel>
     fun getGames(): Flow<List<GameModel>>
     suspend fun putGame(game: GameModel): Flow<GameModel>
+    fun getGamesByTeamId(teamId: Int): Flow<List<GameModel>>
+    suspend fun deleteGame(game: GameModel): Boolean
+
 }

@@ -19,5 +19,8 @@ interface TeamDao {
     suspend fun get(id: Long): TeamEntity?
 
     @Delete(entity = TeamEntity::class)
-    suspend fun delete(team: TeamEntity)
+    suspend fun delete(team: TeamEntity): Int
+
+    @Query("UPDATE team SET name = :name, short_name = :shortName, logo_uri = :uri WHERE id = :id")
+    suspend fun update(id: Long, name: String, shortName: String, uri: String): Int
 }

@@ -46,6 +46,20 @@ object AppButtonColors {
             contentColor = AppTextPrimary
         )
     }
+    @Composable
+    fun secondary(): ButtonColors {
+        return ButtonDefaults.buttonColors(
+            containerColor = AppBackColor,
+            contentColor = AppTextPrimary
+        )
+    }
+    @Composable
+    fun success(): ButtonColors {
+        return ButtonDefaults.buttonColors(
+            containerColor = AppSuccesColor,
+            contentColor = AppTextPrimary
+        )
+    }
 }
 
 object AppCardColors {

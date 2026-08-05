@@ -21,3 +21,6 @@ val AppBorder = Color(0xFF424242)
 
 val AppTextPrimary = Color(0xFFFFFFFF)
 val AppTextSecondary = Color(0xFFBDBDBD)
+
+val AppBackColor = Color(0xFF830E0E)
+val AppSuccesColor = Color(0xFF1F7A1F)
