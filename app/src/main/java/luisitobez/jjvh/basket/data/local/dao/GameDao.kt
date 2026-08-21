@@ -24,11 +24,18 @@ interface GameDao {
 
     @Query(
         """UPDATE game
-        SET current_period = :period, clock_seconds_remaining = :secondsRemaining, status = :status
+        SET current_period = :period,
+            clock_seconds_remaining = :secondsRemaining,
+            clock_started_at_epoch_ms = :clockStartedAtEpochMs,
+            status = :status
         WHERE id = :gameId"""
     )
     suspend fun updateGameClock(
-        gameId: Long, period: Int, secondsRemaining: Int?, status: String = "IN_PROGRESS"
+        gameId: Long,
+        period: Int,
+        secondsRemaining: Int?,
+        clockStartedAtEpochMs: Long?,
+        status: String = "IN_PROGRESS"
     )
 
     @Query("UPDATE game SET status = 'FINISHED' WHERE id = :gameId")

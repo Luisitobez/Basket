@@ -28,4 +28,10 @@ interface GameRosterDao {
 
     @Query("UPDATE game_roster SET is_active = :isActive WHERE id = :rosterId")
     suspend fun setActive(rosterId: Long, isActive: Boolean)
+
+    @Query("DELETE FROM game_roster WHERE id = :rosterId")
+    suspend fun delete(rosterId: Long)
+
+    @Query("SELECT * FROM game_roster WHERE game_id = :gameId")
+    fun getAll(gameId: Long): Flow<List<GameRosterEntity>>
 }

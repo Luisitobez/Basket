@@ -24,6 +24,14 @@ class ProfileTeamViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(ProfileTeamUiState())
     val uiState: StateFlow<ProfileTeamUiState> = _uiState.asStateFlow()
 
+    init {
+        Log.d("ProfileTeamVM", "CREADO ${hashCode()}")
+    }
+
+    override fun onCleared() {
+        Log.d("ProfileTeamVM", "DESTRUIDO ${hashCode()}")
+        super.onCleared()
+    }
 
     fun getTeamById(id: Int) {
         viewModelScope.launch {
@@ -154,12 +162,6 @@ class ProfileTeamViewModel @Inject constructor(
             }
         }
     }
-
-    override fun onCleared() {
-        super.onCleared()
-        Log.d("ProfileTeamViewModel", "onCleared")
-    }
-
 
     fun getGamesByTeamId(teamId: Int) {
         viewModelScope.launch {

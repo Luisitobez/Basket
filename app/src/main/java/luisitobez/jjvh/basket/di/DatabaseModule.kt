@@ -2,6 +2,8 @@ package luisitobez.jjvh.basket.di
 
 import android.app.Application
 import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,7 +25,7 @@ object DatabaseModule {
             application,
             BasketballDatabase::class.java,
             "basket.db"
-        ).build()
+        ).addMigrations(MIGRATION_1_2).build()
     }
 
     @Provides
@@ -65,4 +67,12 @@ object DatabaseModule {
     fun provideTeamDao(
         database: BasketballDatabase
     ) = database.teamDao()
+
+    private val MIGRATION_1_2 = object : Migration(1, 2) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                "ALTER TABLE game ADD COLUMN clock_started_at_epoch_ms INTEGER"
+            )
+        }
+    }
 }

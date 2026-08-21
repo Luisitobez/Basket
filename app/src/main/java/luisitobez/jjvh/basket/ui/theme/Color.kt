@@ -21,6 +21,16 @@ val AppBorder = Color(0xFF424242)
 
 val AppTextPrimary = Color(0xFFFFFFFF)
 val AppTextSecondary = Color(0xFFBDBDBD)
+val AppTextBlue = Color(0xFF1D52D5)
+val AppTextRed = Color(0xFFD11C1E)
+
 
 val AppBackColor = Color(0xFF830E0E)
 val AppSuccesColor = Color(0xFF1F7A1F)
+
+val AppBlueTransparent = Color(0xFF1D52D5).copy(alpha = 0.2f)
+val AppGreyTransparent = Color(0xFF424242).copy(alpha = 0.2f)
+val AppBlackTransparent = Color(0xA4000000)
+val AppRedTransparent = Color(0xFFD11C1E).copy(alpha = 0.2f)
+val AppContainerButton = Color(0xFF0F1113)
+val AppTintIcon = Color(0xFF66B610)

@@ -34,7 +34,7 @@ import luisitobez.jjvh.basket.data.local.entity.TeamPeriodFoulEntity
         GameEventEntity::class
     ],
     views = [GameScoreView::class],
-    version = 1,
+    version = 2,
     exportSchema = true
 )
 abstract class BasketballDatabase : RoomDatabase() {

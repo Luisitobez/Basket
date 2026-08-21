@@ -1,9 +1,8 @@
 package luisitobez.jjvh.basket.ui.Screen.ProfileTeam
 
-import android.widget.Space
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
@@ -15,28 +14,25 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import luisitobez.jjvh.basket.ui.core.navigation.ProfileTeam
 import luisitobez.jjvh.basket.ui.theme.AppBorderShape
 import luisitobez.jjvh.basket.ui.theme.AppButtonColors
 import luisitobez.jjvh.basket.ui.theme.AppModifierButton
 import luisitobez.jjvh.basket.ui.theme.AppShapeButton
 import luisitobez.jjvh.basket.ui.theme.AppTextFieldColors
-import kotlin.collections.emptyList
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.DisposableEffect
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 
 @Composable
 fun ProfileTeamScreen(
-    viewModel: ProfileTeamViewModel = hiltViewModel(),
     modifier: Modifier,
     id: Int,
     onback: () -> Unit
 ) {
+    val viewModel: ProfileTeamViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(id) {

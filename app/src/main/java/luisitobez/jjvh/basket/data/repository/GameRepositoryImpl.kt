@@ -63,4 +63,14 @@ class GameRepositoryImpl @Inject constructor(
             throw Exception("Failed to delete game", e)
         }
     }
+
+    override suspend fun updateGameClock(
+        gameId: Long,
+        period: Int,
+        secondsRemaining: Int,
+        clockStartedAtEpochMs: Long?,
+        status: String
+    ) {
+        gameDao.updateGameClock(gameId, period, secondsRemaining, clockStartedAtEpochMs, status)
+    }
 }

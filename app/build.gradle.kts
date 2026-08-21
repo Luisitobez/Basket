@@ -74,8 +74,7 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
 
     implementation(libs.androidx.compose.material.icons.extended)
-
-
+    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
 }
 
 room {

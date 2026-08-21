@@ -18,8 +18,6 @@ class GameUseCase @Inject constructor(
     }
 
     suspend fun putGame(game: GameModel): PutGameResult {
-        if (game.homeTeamId == null) return PutGameResult.Error("Equipo local requerido")
-        if (game.awayTeamId == null) return PutGameResult.Error("Equipo visitante requerido")
         if (game.homeTeamId == game.awayTeamId) return PutGameResult.Error("No pueden ser el mismo equipo")
         if (game.gameDate.isNullOrBlank()) return PutGameResult.Error("Fecha requerida")
 
@@ -41,6 +39,17 @@ class GameUseCase @Inject constructor(
 
     suspend fun deleteGame(game: GameModel): Boolean {
         return gameRepository.deleteGame(game)
+    }
+
+    suspend fun updateGameClock(
+        gameId: Long,
+        period: Int,
+        secondsRemaining: Int,
+        clockStartedAtEpochMs: Long?,
+        status: String = "IN_PROGRESS"
+    ) {
+        require(gameId > 0 && period > 0 && secondsRemaining >= 0) { "Estado del reloj inválido" }
+        gameRepository.updateGameClock(gameId, period, secondsRemaining, clockStartedAtEpochMs, status)
     }
 }
 

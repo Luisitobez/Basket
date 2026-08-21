@@ -48,8 +48,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.NavigationDrawerItemDefaults
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -80,7 +78,7 @@ class MainActivity : ComponentActivity() {
 
                 val scope = rememberCoroutineScope()
 
-                val backStack = remember { mutableStateListOf<Any>(Principal) }
+                val backStack = rememberNavBackStack(Principal)
 
                 ModalNavigationDrawer(
                     drawerState = drawerState,

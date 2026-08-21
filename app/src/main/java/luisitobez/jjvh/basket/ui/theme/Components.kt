@@ -60,6 +60,13 @@ object AppButtonColors {
             contentColor = AppTextPrimary
         )
     }
+    @Composable
+    fun transparent(): ButtonColors {
+        return ButtonDefaults.buttonColors(
+            containerColor = Color.Transparent,
+            contentColor = AppTextPrimary
+        )
+    }
 }
 
 object AppCardColors {
@@ -79,6 +86,10 @@ object AppBorderShape {
     @Composable
     fun small(): RoundedCornerShape {
         return RoundedCornerShape(4.dp)
+    }
+    @Composable
+    fun any(): RoundedCornerShape {
+        return RoundedCornerShape(0.dp)
     }
 }
 

@@ -142,6 +142,7 @@ class AddGameViewModel @Inject constructor(
                 status = _uiState.value.status,
                 currentPeriod = _uiState.value.currentPeriod,
                 clockSecondsRemaining = null,
+                clockStartedAtEpochMs = null,
                 notes = _uiState.value.notes
             )
             gameUseCase.putGame(game)

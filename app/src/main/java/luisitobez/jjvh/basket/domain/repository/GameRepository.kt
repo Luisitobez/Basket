@@ -9,5 +9,12 @@ interface GameRepository {
     suspend fun putGame(game: GameModel): Flow<GameModel>
     fun getGamesByTeamId(teamId: Int): Flow<List<GameModel>>
     suspend fun deleteGame(game: GameModel): Boolean
+    suspend fun updateGameClock(
+        gameId: Long,
+        period: Int,
+        secondsRemaining: Int,
+        clockStartedAtEpochMs: Long?,
+        status: String
+    )
 
 }

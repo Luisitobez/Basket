@@ -34,5 +34,6 @@ data class GameEntity(
     val status: String = "SCHEDULED", // SCHEDULED, IN_PROGRESS, FINISHED, CANCELLED
     @ColumnInfo(name = "current_period") val currentPeriod: Int = 1,
     @ColumnInfo(name = "clock_seconds_remaining") val clockSecondsRemaining: Int? = null,
+    @ColumnInfo(name = "clock_started_at_epoch_ms") val clockStartedAtEpochMs: Long? = null,
     val notes: String? = null
 )

@@ -10,5 +10,6 @@ data class GameModel(
     val status: String,
     val currentPeriod: Int,
     val clockSecondsRemaining: Int?,
+    val clockStartedAtEpochMs: Long?,
     val notes: String?
 )

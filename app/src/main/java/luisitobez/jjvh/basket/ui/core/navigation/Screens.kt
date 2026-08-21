@@ -11,7 +11,9 @@ sealed interface BasketRoute : NavKey
 data object Principal : BasketRoute
 
 @Serializable
-data object Game : BasketRoute
+data class Game(
+    val id: Long
+) : BasketRoute
 
 @Serializable
 data object Team : BasketRoute
@@ -24,5 +26,10 @@ data object AddGame : BasketRoute
 
 @Serializable
 data class ProfileTeam(
+    val id: Int
+) : BasketRoute
+
+@Serializable
+data class StartGame(
     val id: Int
 ) : BasketRoute
