@@ -51,6 +51,10 @@ class GameUseCase @Inject constructor(
         require(gameId > 0 && period > 0 && secondsRemaining >= 0) { "Estado del reloj inválido" }
         gameRepository.updateGameClock(gameId, period, secondsRemaining, clockStartedAtEpochMs, status)
     }
+
+    fun checkPeriod(period: Int, isClockRunning: Boolean): Boolean {
+        return period in 1..4 && !isClockRunning
+    }
 }
 
 sealed class PutGameResult {
