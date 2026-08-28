@@ -1,8 +1,10 @@
 package luisitobez.jjvh.basket.ui.Screen.StartGame
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import luisitobez.jjvh.basket.domain.model.PlayerGameStatsModel
 import luisitobez.jjvh.basket.ui.theme.AppBlackTransparent
 import luisitobez.jjvh.basket.ui.theme.AppBorderShape
 
@@ -31,10 +34,16 @@ fun TeamScoreCard(
     teamColor: Color,
     teamFouls: Int,
     timeouts: Int,
-    maxTeamFouls: Int = 9,
-    maxTimeouts: Int = 3,
+    players: List<PlayerGameStatsModel>,
+    maxTeamFouls: Int = 5,
+    maxTimeouts: Int = 7,
     onClick: () -> Unit
 ) {
+    // Los 3 jugadores con más faltas
+    val topFoulPlayers = players
+        .sortedByDescending { it.fouls }
+        .take(3)
+
     Card(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
@@ -80,42 +89,106 @@ fun TeamScoreCard(
                     modifier = Modifier.height(4.dp)
                 )
 
-                Text(
-                    text = "FALTAS DE EQUIPO",
-                    color = Color.LightGray,
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                // FALTAS DE EQUIPO + TOP 3 JUGADORES
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.Top
+                ) {
 
-                Spacer(
-                    modifier = Modifier.height(6.dp)
-                )
+                    // Parte izquierda
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(
+                            text = "FALTAS DE EQUIPO",
+                            color = Color.LightGray,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold
+                        )
 
-                TeamIndicators(
-                    current = teamFouls,
-                    max = maxTeamFouls,
-                    color = teamColor
-                )
+                        Spacer(
+                            modifier = Modifier.height(6.dp)
+                        )
+
+                        TeamIndicators(
+                            current = teamFouls,
+                            max = maxTeamFouls,
+                            color = teamColor
+                        )
+                        // TIEMPOS FUERA
+                        Text(
+                            text = "TIEMPOS FUERA",
+                            color = Color.LightGray,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        Spacer(
+                            modifier = Modifier.height(6.dp)
+                        )
+
+                        TeamIndicators(
+                            current = timeouts,
+                            max = maxTimeouts,
+                            color = teamColor
+                        )
+                    }
+
+
+                    // Parte derecha
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(
+                            text = "FALTAS",
+                            color = Color.LightGray,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        Spacer(
+                            modifier = Modifier.height(6.dp)
+                        )
+
+                        topFoulPlayers.forEach { player ->
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+
+                                Text(
+                                    text = "#${player.jerseyNumber}",
+                                    color = teamColor,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+
+                                Text(
+                                    text = player.playerName,
+                                    color = Color.LightGray,
+                                    fontSize = 11.sp,
+                                    maxLines = 1
+                                )
+
+                                Text(
+                                    text = "${player.fouls}",
+                                    color = if (player.fouls >= 5) {
+                                        Color.Red
+                                    } else {
+                                        Color.White
+                                    },
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+                    }
+                }
 
                 Spacer(
                     modifier = Modifier.height(12.dp)
-                )
-
-                Text(
-                    text = "TIEMPOS FUERA",
-                    color = Color.LightGray,
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Bold
-                )
-
-                Spacer(
-                    modifier = Modifier.height(6.dp)
-                )
-
-                TeamIndicators(
-                    current = timeouts,
-                    max = maxTimeouts,
-                    color = teamColor
                 )
             }
 

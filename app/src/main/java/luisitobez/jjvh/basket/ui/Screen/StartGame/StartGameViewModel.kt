@@ -1,5 +1,7 @@
 package luisitobez.jjvh.basket.ui.Screen.StartGame
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -259,6 +261,7 @@ class StartGameViewModel @Inject constructor(
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun newEvent(
         type: String,
         teamId: Long,
@@ -339,7 +342,7 @@ class StartGameViewModel @Inject constructor(
                     pauseClock()
                     break
                 }
-                //delay(250)
+                delay(250)
             }
         }
     }

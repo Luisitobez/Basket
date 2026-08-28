@@ -520,6 +520,7 @@ fun StartGameScreen(
                 teamColor = AppTextBlue,
                 teamFouls = uiState.homeTeamFouls,
                 timeouts = uiState.homeTimeouts,
+                players = uiState.playerStats.filter { player -> player.teamId == uiState.game?.homeTeamId },
                 onClick = { viewModel.showTeamStats(isHomeTeam = true) }
             )
             Spacer(
@@ -533,6 +534,7 @@ fun StartGameScreen(
                 teamColor = AppTextRed,
                 teamFouls = uiState.awayTeamFouls,
                 timeouts = uiState.awayTimeouts,
+                players = uiState.playerStats.filter { player -> player.teamId == uiState.game?.awayTeamId },
                 onClick = { viewModel.showTeamStats(isHomeTeam = false) }
             )
             Spacer(

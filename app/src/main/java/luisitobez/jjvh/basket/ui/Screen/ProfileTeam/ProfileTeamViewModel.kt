@@ -151,7 +151,7 @@ class ProfileTeamViewModel @Inject constructor(
                     shortName = uiState.value.shortName,
                     uri = uiState.value.logoUri
                 )
-                _uiState.update { it.copy(isLoading = false, error = null) }
+                _uiState.update { it.copy(isLoading = false, error = null, isEditing = false) }
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(
