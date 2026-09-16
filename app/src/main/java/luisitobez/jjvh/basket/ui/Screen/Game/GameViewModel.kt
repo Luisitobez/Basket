@@ -1,8 +1,10 @@
 package luisitobez.jjvh.basket.ui.Screen.Game
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,19 +31,36 @@ class GameViewModel @Inject constructor(
     val _uiState = MutableStateFlow(GameUiState())
     val uiState: StateFlow<GameUiState> = _uiState
 
+    // [01] OBTENER PARTIDO
     fun getGameById(id: Int) {
         viewModelScope.launch {
 
             gameUseCase.getGameById(id)
                 .collect { game ->
 
+                    Log.d("GameViewModel", "GAME: $game")
+                    Log.d("GameViewModel", "HOME TEAM ID: ${game?.homeTeamId}")
+                    Log.d("GameViewModel", "AWAY TEAM ID: ${game?.awayTeamId}")
+
                     _uiState.update {
                         it.copy(
+                            // [02] DATOS DEL PARTIDO
                             gameId = id,
-                            game = game
+                            game = game,
+
+                            // [03] IDS DE LOS EQUIPOS
+                            homeTeamId = game?.homeTeamId?.toInt(),
+                            awayTeamId = game?.awayTeamId?.toInt(),
+
+                            // [04] DATOS ADICIONALES
+                            notes = game?.notes ?: "",
+                            venue = game?.venue ?: "",
+                            date = game?.gameDate ?: "",
+                            status = game?.status ?: ""
                         )
                     }
 
+                    // [05] OBTENER ROSTER
                     getGameRoster()
                 }
         }
@@ -78,24 +97,40 @@ class GameViewModel @Inject constructor(
                 notes = notes
             )
         }
+        viewModelScope.launch {
+            gameUseCase.updateGame(
+                _uiState.value.game?.copy(notes = uiState.value.notes)!!
+            )
+        }
     }
 
+    // [06] OBTENER LISTA DE EQUIPOS
     fun onGetListOfTeams() {
         viewModelScope.launch {
+
             teamUseCase.getTeams().collect { teams ->
+
+                // [07] GUARDAR EQUIPOS
                 _uiState.update {
                     it.copy(
                         listOfTeams = teams
                     )
                 }
-                _uiState.update {
-                    it.copy(
-                        awayTeamId = _uiState.value.game?.awayTeamId?.toInt(),
-                        homeTeamId = _uiState.value.game?.homeTeamId?.toInt(),
-                        venue = _uiState.value.game?.venue ?: "",
-                        date = _uiState.value.game?.gameDate ?: "",
-                    )
-                }
+
+                Log.d(
+                    "GameViewModel",
+                    "EQUIPOS CARGADOS: ${teams.size}"
+                )
+
+                Log.d(
+                    "GameViewModel",
+                    "HOME ID: ${_uiState.value.homeTeamId}"
+                )
+
+                Log.d(
+                    "GameViewModel",
+                    "AWAY ID: ${_uiState.value.awayTeamId}"
+                )
             }
         }
     }
@@ -117,41 +152,66 @@ class GameViewModel @Inject constructor(
     }
 
     fun onChangeHomeTeamId(homeTeamId: Int?) {
-        _uiState.update {
-            it.copy(
-                homeTeamId = homeTeamId
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(
+                    homeTeamId = homeTeamId
+                )
+            }
+            gameUseCase.updateGame(
+                _uiState.value.game?.copy(homeTeamId = homeTeamId?.toLong() ?: 0)!!
             )
         }
     }
 
     fun onChangeAwayTeamId(awayTeamId: Int?) {
-        _uiState.update {
-            it.copy(
-                awayTeamId = awayTeamId
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(
+                    awayTeamId = awayTeamId
+                )
+            }
+            gameUseCase.updateGame(
+                _uiState.value.game?.copy(awayTeamId = awayTeamId?.toLong() ?: 0)!!
             )
         }
     }
 
     fun onChangeVenue(venue: String) {
-        _uiState.update {
-            it.copy(
-                venue = venue
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(
+                    venue = venue
+                )
+            }
+            gameUseCase.updateGame(
+                _uiState.value.game?.copy(venue = uiState.value.venue)!!
             )
         }
     }
 
     fun onChangeStatus(status: String) {
-        _uiState.update {
-            it.copy(
-                status = status
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(
+                    status = status
+                )
+            }
+            gameUseCase.updateGame(
+                _uiState.value.game?.copy(status = status)!!
             )
         }
     }
 
     fun onChangeDatePickerState(datePickerState: String) {
-        _uiState.update {
-            it.copy(
-                datePickerState = datePickerState
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(
+                    datePickerState = datePickerState
+                )
+            }
+            gameUseCase.updateGame(
+                _uiState.value.game?.copy(gameDate = datePickerState)!!
             )
         }
     }
@@ -221,6 +281,34 @@ class GameViewModel @Inject constructor(
             gameRosterUseCase.eliminarJugador(rosterId)
         }
     }
+
+    fun startGame(onclick:() -> Unit){
+        viewModelScope.launch {
+            if(gameUseCase.startGame(roostersHomeTeam = _uiState.value.roostersHomeTeam.size, rostersAwayTeam = _uiState.value.roostersAwayTeam.size)){
+                gameUseCase.updateGame(
+                    _uiState.value.game?.copy(status = "IN_PROGRESS")!!
+                )
+                onclick()
+                Log.d("GameViewModel", "Juego iniciado")
+            }else{
+                _uiState.update {
+                    it.copy(
+                        error = "Ambos equipos deben tener al menos 5 jugadores para iniciar el juego",
+                        isError = true
+                    )
+                }
+
+                delay(2000)
+
+                _uiState.update {
+                    it.copy(
+                        error = null,
+                        isError = false
+                    )
+                }
+            }
+        }
+    }
 }
 
 data class GameUiState(
@@ -238,6 +326,8 @@ data class GameUiState(
     val roostersHomeTeam: List<GameRosterModel> = emptyList(),
     val roostersAwayTeam: List<GameRosterModel> = emptyList(),
     val listOfTeams: List<TeamModel> = emptyList(),
+    val HomeTeam: TeamModel? = null,
+    val AwayTeam: TeamModel? = null,
     val expanded1: Boolean = false,
     val expanded2: Boolean = false,
     val showDatePicker: Boolean = false,
@@ -254,5 +344,7 @@ data class GameUiState(
     val team: Boolean = true,
     val playerName: String? = null,
     val jerseyNumber: String? = null,
-    val addPlayer: Boolean = false
+    val addPlayer: Boolean = false,
+    val error: String? = null,
+    val isError: Boolean = false,
 )

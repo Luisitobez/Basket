@@ -1,5 +1,12 @@
+// ============================================================
+// [01] PACKAGE
+// ============================================================
 package luisitobez.jjvh.basket.ui.Screen.Game
 
+// ============================================================
+// [02] IMPORTS
+// ============================================================
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -37,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -57,6 +65,9 @@ import luisitobez.jjvh.basket.ui.theme.PrimaryOrange
 import java.time.Instant
 import java.time.ZoneId
 
+// ============================================================
+// [03] PANTALLA PRINCIPAL: StartGameScreen
+// ============================================================
 @Composable
 fun GameScreen(
     viewModel: GameViewModel = hiltViewModel(),
@@ -90,11 +101,13 @@ fun GameScreen(
                     .padding(16.dp, 0.dp, 16.dp, 16.dp)
                     .fillMaxWidth()
             ) {
+
+                Log.d("GameScreen", "EQUIPO LOCAL: ${uiState.homeTeamId}")
                 TeamSelector(
                     selectedTeam = uiState.listOfTeams
-                        .find { it.id.toInt() == uiState.homeTeamId }
+                        .firstOrNull { it.id.toInt() == uiState.homeTeamId }
                         ?.name
-                        ?: "Seleccionar equipo",
+                        .orEmpty(),
 
                     teams = uiState.listOfTeams,
 
@@ -126,9 +139,8 @@ fun GameScreen(
             ) {
                 TeamSelector(
                     selectedTeam = uiState.listOfTeams
-                        .find { it.id.toInt() == uiState.awayTeamId }
-                        ?.name
-                        ?: "Seleccionar equipo",
+                        .firstOrNull { it.id.toInt() == uiState.awayTeamId }
+                        ?.name.orEmpty(),
 
                     teams = uiState.listOfTeams,
 
@@ -191,8 +203,10 @@ fun GameScreen(
                     }
             ) {
                 OutlinedTextField(
-                    value = uiState.datePickerState ?: "",
-                    onValueChange = {},
+                    value = uiState.game?.gameDate ?: "",
+                    onValueChange = {
+                        viewModel.onChangeDatePickerState(it)
+                    },
                     readOnly = true,
                     enabled = false,
                     label = {
@@ -224,7 +238,7 @@ fun GameScreen(
                     .fillMaxWidth()
             ) {
                 StatusSelector(
-                    selectedStatus = uiState.status,
+                    selectedStatus = uiState.game?.status,
 
                     statuses = uiState.mapStatus,
 
@@ -360,7 +374,13 @@ fun GameScreen(
 
             Button(
                 onClick = {
-                    onNavigateToStartGame(id)
+                    Log.d("GameScreen", "BOTÓN PRESIONADO")
+
+                    viewModel.startGame {
+                        Log.d("GameScreen", "ONCLICK EJECUTADO")
+
+                        onNavigateToStartGame(id)
+                    }
                 },
                 modifier = AppModifierButton.default(),
                 colors = AppButtonColors.success(),
@@ -368,6 +388,15 @@ fun GameScreen(
             ) {
                 Text("Empezar Juego")
             }
+
+            Text(
+                text = uiState.error ?: "",
+                color = AppTextRed,
+                modifier = Modifier.fillMaxWidth(),
+                fontWeight = FontWeight.Bold,
+                fontSize = 10.sp,
+                textAlign = TextAlign.Center
+            )
 
             if (uiState.showDatePicker) {
 

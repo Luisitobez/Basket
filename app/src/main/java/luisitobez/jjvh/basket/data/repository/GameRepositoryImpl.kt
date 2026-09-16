@@ -73,4 +73,8 @@ class GameRepositoryImpl @Inject constructor(
     ) {
         gameDao.updateGameClock(gameId, period, secondsRemaining, clockStartedAtEpochMs, status)
     }
+
+    override suspend fun updateGame(game: GameModel) {
+        gameDao.update(game.toEntity())
+    }
 }

@@ -31,6 +31,7 @@ import luisitobez.jjvh.basket.domain.model.GameRosterModel
 import luisitobez.jjvh.basket.ui.theme.AppBackColor
 import luisitobez.jjvh.basket.ui.theme.AppBlackTransparent
 import luisitobez.jjvh.basket.ui.theme.AppBorderShape
+import luisitobez.jjvh.basket.ui.theme.AppCardColorStartGame
 import luisitobez.jjvh.basket.ui.theme.AppTextBlue
 import luisitobez.jjvh.basket.ui.theme.AppTextPrimary
 import luisitobez.jjvh.basket.ui.theme.AppTextSecondary
@@ -40,7 +41,7 @@ import luisitobez.jjvh.basket.ui.theme.PrimaryOrange
 fun DialogRosters(
     listOfRosters: List<GameRosterModel>,
     onDismiss: () -> Unit,
-    onRosterSelected: (GameRosterModel) -> Unit
+    onRosterSelected: (GameRosterModel) -> Unit,
 ) {
     Dialog(
         onDismissRequest = onDismiss,
@@ -125,7 +126,7 @@ fun DialogRosters(
                                 .fillMaxWidth(),
                             shape = AppBorderShape.default(),
                             colors = CardDefaults.cardColors(
-                                containerColor = AppBackColor
+                                containerColor = AppCardColorStartGame
                             )
                         ) {
 
@@ -149,7 +150,7 @@ fun DialogRosters(
                                 ) {
 
                                     Text(
-                                        text = roster.jerseyNumber?.toString() ?: "-",
+                                        text = roster.jerseyNumber.toString() ?: "-",
                                         color = AppTextBlue,
                                         fontSize = 18.sp,
                                         fontWeight = FontWeight.Bold

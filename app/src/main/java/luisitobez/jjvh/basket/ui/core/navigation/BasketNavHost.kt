@@ -40,6 +40,7 @@ fun BasketNavHost(
                     PrincipalScreen(
                         onStartGame = {
                             backStack.add(AddGame)
+                            Log.d("NAV", "Antes: ${backStack}")
                         },
                         modifier = modifier,
                         onNavigateToGame = { id ->
@@ -54,6 +55,7 @@ fun BasketNavHost(
                         id = route.id.toInt(),
                         onNavigateToStartGame = { id ->
                             backStack.add(StartGame(id))
+                            Log.d("NAV", "Antes: ${backStack}")
                         }
                     )
                 }
@@ -63,6 +65,7 @@ fun BasketNavHost(
                         modifier = modifier,
                         onAddTeamClick = {
                             backStack.add(AddTeam)
+                            Log.d("NAV", "Antes: ${backStack}")
                         },
                         onTeamClick = { id ->
                             // eliminar ProfileTeam anterior si existe arriba, para no acumular estados
@@ -70,6 +73,7 @@ fun BasketNavHost(
                                 backStack.removeLast()
                             }
                             backStack.add(ProfileTeam(id))
+                            Log.d("NAV", "Antes: ${backStack}")
                         }
                     )
                 }
@@ -78,6 +82,7 @@ fun BasketNavHost(
                     AddTeamScreen(
                         onback = {
                             backStack.removeLast()
+                            Log.d("NAV", "Antes: ${backStack}")
                         },
                         modifier = modifier
                     )
@@ -87,6 +92,7 @@ fun BasketNavHost(
                     AddGameScreen(
                         onAddGameClick = {
                             backStack.removeLast()
+                            Log.d("NAV", "Antes: ${backStack}")
                         },
                         modifier = modifier
                     )
@@ -101,14 +107,20 @@ fun BasketNavHost(
                             Log.d("NAV", "Después: ${backStack.size}")
                         }
                     )
-                    print(backStack)
+                    Log.d("NAV", "Contenido: ${backStack}")
                 }
 
                 is StartGame -> NavEntry(route) {
                     StartGameScreen(
+                        onBack = {
+                            Log.d("NAV", "ANTES BACK: $backStack")
+                            backStack.removeLast()
+                            Log.d("NAV", "Antes: $backStack")
+                        },
                         id = route.id,
-                        modifier = modifier
+                        modifier = modifier,
                     )
+                    Log.d("NAV", "Contenido: ${backStack}")
                 }
 
 

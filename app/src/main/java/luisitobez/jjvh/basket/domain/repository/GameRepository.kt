@@ -17,4 +17,5 @@ interface GameRepository {
         status: String
     )
 
+    suspend fun updateGame(game: GameModel)
 }

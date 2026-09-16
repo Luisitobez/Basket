@@ -31,6 +31,7 @@ import androidx.compose.ui.window.DialogProperties
 import luisitobez.jjvh.basket.domain.model.PlayerGameStatsModel
 import luisitobez.jjvh.basket.ui.theme.AppBlackTransparent
 import luisitobez.jjvh.basket.ui.theme.AppBorderShape
+import luisitobez.jjvh.basket.ui.theme.AppCardColorStartGame
 import luisitobez.jjvh.basket.ui.theme.AppTextPrimary
 import luisitobez.jjvh.basket.ui.theme.AppTextRed
 import luisitobez.jjvh.basket.ui.theme.AppTextSecondary
@@ -153,7 +154,7 @@ fun DialogTeamStats(
                             modifier = Modifier.fillMaxWidth(),
                             shape = AppBorderShape.default(),
                             colors = CardDefaults.cardColors(
-                                containerColor = Color(0xFF1E1E1E)
+                                containerColor = AppCardColorStartGame
                             )
                         ) {
 

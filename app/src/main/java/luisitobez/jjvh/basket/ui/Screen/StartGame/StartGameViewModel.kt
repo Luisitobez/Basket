@@ -1,6 +1,7 @@
 package luisitobez.jjvh.basket.ui.Screen.StartGame
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -87,8 +88,7 @@ class StartGameViewModel @Inject constructor(
             gameEventUseCase.observeScore(gameId.toLong()).collect { score ->
                 _uiState.update {
                     it.copy(
-                        scoreHomeTeam = score.homeTeamScore,
-                        scoreAwayTeam = score.awayTeamScore
+                        scoreHomeTeam = score.homeTeamScore, scoreAwayTeam = score.awayTeamScore
                     )
                 }
             }
@@ -104,8 +104,7 @@ class StartGameViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         homeTimeouts = events.count { event -> !event.isCancelled && event.eventType == "TIMEOUT" && event.teamId == game.homeTeamId },
-                        awayTimeouts = events.count { event -> !event.isCancelled && event.eventType == "TIMEOUT" && event.teamId == game.awayTeamId }
-                    )
+                        awayTimeouts = events.count { event -> !event.isCancelled && event.eventType == "TIMEOUT" && event.teamId == game.awayTeamId })
                 }
             }
         }
@@ -116,6 +115,17 @@ class StartGameViewModel @Inject constructor(
         recordEvent(if (points == 1) "FREE_THROW" else "SCORE", isHomeTeam, points, rosterId)
     }
 
+    fun updatePeriod(period: Int) {
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(currentPeriod = period)
+            }
+            gameUseCase.updateGame(
+                _uiState.value.game!!.copy(currentPeriod = period)
+            )
+        }
+    }
+
     fun recordFoul(isHomeTeam: Boolean, rosterId: Long? = null, foulType: String? = null) {
         val game = _uiState.value.game ?: return setError("No se ha cargado el partido")
         val teamId = if (isHomeTeam) game.homeTeamId else game.awayTeamId
@@ -123,15 +133,11 @@ class StartGameViewModel @Inject constructor(
             runCatching {
                 gameEventUseCase.recordFoul(
                     newEvent(
-                        "FOUL",
-                        teamId,
-                        rosterId,
-                        0,
-                        foulType
+                        "FOUL", teamId, rosterId, 0, foulType
+
                     )
                 )
-            }
-                .onFailure { setError(it.message ?: "No se pudo registrar la falta") }
+            }.onFailure { setError(it.message ?: "No se pudo registrar la falta") }
         }
     }
 
@@ -178,22 +184,37 @@ class StartGameViewModel @Inject constructor(
         val startedAt = System.currentTimeMillis()
         _uiState.update {
             it.copy(
-                isClockRunning = true,
-                clockStartedAtEpochMs = startedAt,
-                error = null
+                isClockRunning = true, clockStartedAtEpochMs = startedAt, error = null
             )
         }
         startClockTicker()
         persistClock(game.id, _uiState.value.currentPeriod, seconds, startedAt)
     }
 
-    fun pauseClock() {
+    fun pauseClock(persist: Boolean = true) {
         val game = _uiState.value.game ?: return
         val seconds = _uiState.value.clockSecondsRemaining
+        val period = _uiState.value.currentPeriod
+
         clockJob?.cancel()
         clockJob = null
-        _uiState.update { it.copy(isClockRunning = false, clockStartedAtEpochMs = null) }
-        persistClock(game.id, _uiState.value.currentPeriod, seconds, null)
+
+        _uiState.update {
+            it.copy(
+                isClockRunning = false,
+                clockStartedAtEpochMs = null
+            )
+        }
+
+        if (persist) {
+            persistClock(
+                game.id,
+                period,
+                seconds,
+                null
+            )
+        }
+        Log.d("StartGameVM", "🔥🔥🔥 pauseClock")
     }
 
     fun changePeriod(delta: Int) {
@@ -201,7 +222,7 @@ class StartGameViewModel @Inject constructor(
         val period = (_uiState.value.currentPeriod + delta).coerceAtLeast(1)
 
         viewModelScope.launch {
-            if(gameUseCase.checkPeriod(period, _uiState.value.isClockRunning)) {
+            if (gameUseCase.checkPeriod(period, _uiState.value.isClockRunning, _uiState.value.clockSecondsRemaining)) {
                 clockJob?.cancel()
                 clockJob = null
                 _uiState.update {
@@ -213,6 +234,7 @@ class StartGameViewModel @Inject constructor(
                     )
                 }
                 persistClock(game.id, period, DEFAULT_PERIOD_SECONDS, null)
+                gameUseCase.updateGame(game.copy(currentPeriod = period))
             }
         }
     }
@@ -228,8 +250,16 @@ class StartGameViewModel @Inject constructor(
         val teamId = if (isHomeTeam) game.homeTeamId else game.awayTeamId
         _uiState.update { it.copy(showTimeoutDialog = false) }
         viewModelScope.launch {
-            runCatching { gameEventUseCase.record(newEvent("TIMEOUT", teamId, null, 0)) }
-                .onFailure { setError(it.message ?: "No se pudo registrar el tiempo fuera") }
+            runCatching {
+                gameEventUseCase.record(
+                    newEvent(
+                        "TIMEOUT",
+                        teamId,
+                        null,
+                        0
+                    )
+                )
+            }.onFailure { setError(it.message ?: "No se pudo registrar el tiempo fuera") }
         }
     }
 
@@ -242,9 +272,7 @@ class StartGameViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 teamStatsDialog = TeamStatsDialogState(
-                    teamId,
-                    teamName,
-                    isHomeTeam
+                    teamId, teamName, isHomeTeam
                 )
             )
         }
@@ -256,18 +284,22 @@ class StartGameViewModel @Inject constructor(
         val game = _uiState.value.game ?: return setError("No se ha cargado el partido")
         val teamId = if (isHomeTeam) game.homeTeamId else game.awayTeamId
         viewModelScope.launch {
-            runCatching { gameEventUseCase.record(newEvent(eventType, teamId, rosterId, points)) }
-                .onFailure { setError(it.message ?: "No se pudo registrar el evento") }
+            runCatching {
+                gameEventUseCase.record(
+                    newEvent(
+                        eventType,
+                        teamId,
+                        rosterId,
+                        points
+                    )
+                )
+            }.onFailure { setError(it.message ?: "No se pudo registrar el evento") }
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun newEvent(
-        type: String,
-        teamId: Long,
-        rosterId: Long?,
-        points: Int,
-        foulType: String? = null
+        type: String, teamId: Long, rosterId: Long?, points: Int, foulType: String? = null
     ): GameEventEntity {
         val game = requireNotNull(_uiState.value.game)
         return GameEventEntity(
@@ -291,8 +323,7 @@ class StartGameViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         rostersHomeTeam = rosters.filter { roster -> roster.teamId == game.homeTeamId },
-                        rostersAwayTeam = rosters.filter { roster -> roster.teamId == game.awayTeamId }
-                    )
+                        rostersAwayTeam = rosters.filter { roster -> roster.teamId == game.awayTeamId })
                 }
             }
         }
@@ -322,8 +353,14 @@ class StartGameViewModel @Inject constructor(
 
     private fun persistClock(gameId: Long, period: Int, seconds: Int, startedAt: Long?) {
         viewModelScope.launch {
-            runCatching { gameUseCase.updateGameClock(gameId, period, seconds, startedAt) }
-                .onFailure { setError(it.message ?: "No se pudo guardar el reloj") }
+            runCatching {
+                gameUseCase.updateGameClock(
+                    gameId,
+                    period,
+                    seconds,
+                    startedAt
+                )
+            }.onFailure { setError(it.message ?: "No se pudo guardar el reloj"); Log.d("StartGameVM", it.message ?: "No se pudo guardar el reloj") }
         }
     }
 
@@ -334,9 +371,7 @@ class StartGameViewModel @Inject constructor(
                 val startedAt = _uiState.value.clockStartedAtEpochMs ?: break
                 val elapsedSeconds = ((System.currentTimeMillis() - startedAt) / 1_000).toInt()
                 val seconds = (_uiState.value.game?.clockSecondsRemaining
-                    ?: _uiState.value.clockSecondsRemaining)
-                    .minus(elapsedSeconds)
-                    .coerceAtLeast(0)
+                    ?: _uiState.value.clockSecondsRemaining).minus(elapsedSeconds).coerceAtLeast(0)
                 _uiState.update { it.copy(clockSecondsRemaining = seconds) }
                 if (seconds == 0) {
                     pauseClock()
@@ -351,10 +386,16 @@ class StartGameViewModel @Inject constructor(
         gameJob?.cancel(); rosterJob?.cancel(); scoreJob?.cancel(); statsJob?.cancel(); foulsJob?.cancel(); eventsJob?.cancel(); clockJob?.cancel()
     }
 
-    override fun onCleared() {
-        cancelObservers(); super.onCleared()
-    }
 
+    /***
+     *
+     * Pausa del Relog al momento de salir de la pantalla
+     *
+     */
+    override fun onCleared() {
+        cancelObservers()
+        super.onCleared()
+    }
 
     private fun onChangeIsChangePeriodMin(isChangePeriod: Boolean) {
         _uiState.update { it.copy(isChangePeriodMin = isChangePeriod) }
@@ -395,9 +436,7 @@ data class StartGameUiState(
 )
 
 data class PendingAction(
-    val type: PendingActionType,
-    val isHomeTeam: Boolean = true,
-    val points: Int = 0
+    val type: PendingActionType, val isHomeTeam: Boolean = true, val points: Int = 0
 )
 
 data class TeamStatsDialogState(val teamId: Long, val teamName: String, val isHomeTeam: Boolean)
