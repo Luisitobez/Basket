@@ -3,6 +3,7 @@ package luisitobez.jjvh.basket.data.repository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import luisitobez.jjvh.basket.data.Mapper.toDomain
+import luisitobez.jjvh.basket.data.Mapper.toEntity
 import luisitobez.jjvh.basket.data.local.dao.GameEventDao
 import luisitobez.jjvh.basket.data.local.dao.MatchActionDao
 import luisitobez.jjvh.basket.data.local.dao.PlayerGameStats
@@ -37,6 +38,9 @@ class GameEventRepositoryImpl @Inject constructor(
     }
 
     override suspend fun recordFoul(event: GameEventEntity): Long = matchActionDao.recordFoul(event)
+
+    override suspend fun recordTechnicalFoul(event: GameEventEntity): Long =
+        matchActionDao.recordTechnicalFoul(event)
 
     override fun observeScore(gameId: Long): Flow<GameScoreModel> {
         return gameEventDao.observeScore(gameId).map { it?.toDomain() ?: GameScoreModel(gameId, 0, 0) }

@@ -7,17 +7,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import luisitobez.jjvh.basket.data.local.entity.GameEventEntity
 import luisitobez.jjvh.basket.domain.model.GameModel
 import luisitobez.jjvh.basket.domain.model.GameRosterModel
 import luisitobez.jjvh.basket.domain.model.PlayerGameStatsModel
 import luisitobez.jjvh.basket.domain.model.TeamPeriodFoulModel
+import luisitobez.jjvh.basket.domain.rules.FoulRules
 import luisitobez.jjvh.basket.domain.usecase.GameEventUseCase
 import luisitobez.jjvh.basket.domain.usecase.GameRosterUseCase
 import luisitobez.jjvh.basket.domain.usecase.GameUseCase
@@ -33,6 +34,7 @@ class StartGameViewModel @Inject constructor(
     private val gameEventUseCase: GameEventUseCase,
     private val teamPeriodFoulUseCase: TeamPeriodFoulUseCase,
     private val teamUseCase: TeamUseCase,
+    private val foulRules: FoulRules
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(StartGameUiState())
@@ -142,13 +144,30 @@ class StartGameViewModel @Inject constructor(
     }
 
     fun selectPlayerFor(isHomeTeam: Boolean, action: PendingAction) {
-        val roster =
-            if (isHomeTeam) _uiState.value.rostersHomeTeam else _uiState.value.rostersAwayTeam
+        val roster = if (isHomeTeam) _uiState.value.rostersHomeTeam
+        else _uiState.value.rostersAwayTeam
+
         if (roster.isEmpty()) return setError("No hay jugadores registrados para este equipo")
+
+        // Bloqueamos tanto por 5 personales como por 2 técnicas
+        val blockedIds: Set<Long> = if (action.type == PendingActionType.SCORE) {
+            _uiState.value.playerStats
+                .filter { foulRules.isDisqualified(it) }   // 👈 antes era isEliminated
+                .map { it.rosterId }
+                .toSet()
+        } else {
+            emptySet()
+        }
+
+        if (action.type == PendingActionType.SCORE && blockedIds.size == roster.size) {
+            return setError("Todos los jugadores de este equipo están descalificados")
+        }
+
         _uiState.update {
             it.copy(
                 dialog = true,
                 dialogRoster = roster,
+                dialogBlockedRosterIds = blockedIds,
                 pendingAction = action.copy(isHomeTeam = isHomeTeam)
             )
         }
@@ -160,6 +179,7 @@ class StartGameViewModel @Inject constructor(
         when (action.type) {
             PendingActionType.SCORE -> recordScore(action.isHomeTeam, action.points, roster.id)
             PendingActionType.FOUL -> recordFoul(action.isHomeTeam, roster.id)
+            PendingActionType.TECHNICAL_FOUL -> recordTechnicalFoul(action.isHomeTeam, roster.id)
         }
     }
 
@@ -168,6 +188,7 @@ class StartGameViewModel @Inject constructor(
             it.copy(
                 dialog = dialog,
                 dialogRoster = if (dialog) it.dialogRoster else emptyList(),
+                dialogBlockedRosterIds = if (dialog) it.dialogBlockedRosterIds else emptySet(),
                 pendingAction = if (dialog) it.pendingAction else null
             )
         }
@@ -218,23 +239,51 @@ class StartGameViewModel @Inject constructor(
     }
 
     fun changePeriod(delta: Int) {
-        val game = _uiState.value.game ?: return
+        val game = _uiState.value.game ?: return setError("No se ha cargado el partido")
         val period = (_uiState.value.currentPeriod + delta).coerceAtLeast(1)
 
         viewModelScope.launch {
-            if (gameUseCase.checkPeriod(period, _uiState.value.isClockRunning, _uiState.value.clockSecondsRemaining)) {
-                clockJob?.cancel()
-                clockJob = null
-                _uiState.update {
-                    it.copy(
-                        currentPeriod = period,
-                        clockSecondsRemaining = DEFAULT_PERIOD_SECONDS,
-                        clockStartedAtEpochMs = null,
-                        isClockRunning = false
-                    )
-                }
-                persistClock(game.id, period, DEFAULT_PERIOD_SECONDS, null)
-                gameUseCase.updateGame(game.copy(currentPeriod = period))
+            val isTied = _uiState.value.scoreHomeTeam == _uiState.value.scoreAwayTeam
+            if (!gameUseCase.checkPeriod(
+                    period,
+                    _uiState.value.isClockRunning,
+                    _uiState.value.clockSecondsRemaining,
+                    isTied
+                )
+            ) {
+                setError(
+                    if (period > 4 && !isTied)
+                        "Solo se puede ir a prórroga si hay empate"
+                    else
+                        "Solo se puede cambiar de cuarto con el reloj en 0 y detenido"
+                )
+                return@launch
+            }
+
+            clockJob?.cancel()
+            clockJob = null
+
+            val updatedGame = game.copy(
+                currentPeriod = period,
+                clockSecondsRemaining = DEFAULT_PERIOD_SECONDS,
+                clockStartedAtEpochMs = null
+            )
+
+            _uiState.update {
+                it.copy(
+                    game = updatedGame,
+                    currentPeriod = period,
+                    clockSecondsRemaining = DEFAULT_PERIOD_SECONDS,
+                    clockStartedAtEpochMs = null,
+                    isClockRunning = false,
+                    error = null
+                )
+            }
+
+            runCatching {
+                gameUseCase.updateGame(updatedGame)
+            }.onFailure {
+                setError(it.message ?: "No se pudo guardar el cambio de cuarto")
             }
         }
     }
@@ -360,7 +409,11 @@ class StartGameViewModel @Inject constructor(
                     seconds,
                     startedAt
                 )
-            }.onFailure { setError(it.message ?: "No se pudo guardar el reloj"); Log.d("StartGameVM", it.message ?: "No se pudo guardar el reloj") }
+            }.onFailure {
+                setError(
+                    it.message ?: "No se pudo guardar el reloj"
+                ); Log.d("StartGameVM", it.message ?: "No se pudo guardar el reloj")
+            }
         }
     }
 
@@ -404,6 +457,18 @@ class StartGameViewModel @Inject constructor(
     private fun onChangeIsChangePeriodMax(isChangePeriod: Boolean) {
         _uiState.update { it.copy(isChangePeriodMax = isChangePeriod) }
     }
+
+    fun recordTechnicalFoul(isHomeTeam: Boolean, rosterId: Long? = null) {
+        val game = _uiState.value.game ?: return setError("No se ha cargado el partido")
+        val teamId = if (isHomeTeam) game.homeTeamId else game.awayTeamId
+        viewModelScope.launch {
+            runCatching {
+                gameEventUseCase.recordTechnicalFoul(
+                    newEvent("TECHNICAL_FOUL", teamId, rosterId, 0)
+                )
+            }.onFailure { setError(it.message ?: "No se pudo registrar la falta técnica") }
+        }
+    }
 }
 
 data class StartGameUiState(
@@ -432,7 +497,8 @@ data class StartGameUiState(
     val isLoading: Boolean = false,
     val error: String? = null,
     val isChangePeriodMin: Boolean = false,
-    val isChangePeriodMax: Boolean = false
+    val isChangePeriodMax: Boolean = false,
+    val dialogBlockedRosterIds: Set<Long> = emptySet()
 )
 
 data class PendingAction(
@@ -440,6 +506,6 @@ data class PendingAction(
 )
 
 data class TeamStatsDialogState(val teamId: Long, val teamName: String, val isHomeTeam: Boolean)
-enum class PendingActionType { SCORE, FOUL }
+enum class PendingActionType { SCORE, FOUL, TECHNICAL_FOUL }
 
 private const val DEFAULT_PERIOD_SECONDS = 10 * 60

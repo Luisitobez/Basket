@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import luisitobez.jjvh.basket.domain.model.TeamModel
 import luisitobez.jjvh.basket.domain.usecase.TeamUseCase
 import javax.inject.Inject
 

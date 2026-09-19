@@ -69,8 +69,20 @@ class GameUseCase @Inject constructor(
         gameRepository.updateGameClock(gameId, period, secondsRemaining, clockStartedAtEpochMs, status)
     }
 
-    fun checkPeriod(period: Int, isClockRunning: Boolean, clockSecondsRemaining: Int): Boolean {
-        return period in 1..4 && !isClockRunning && clockSecondsRemaining == 0
+    fun checkPeriod(
+        period: Int,
+        isClockRunning: Boolean,
+        clockSecondsRemaining: Int,
+        isTied: Boolean = false
+    ): Boolean {
+        // 1. El reloj siempre debe estar detenido y en 0
+        if (isClockRunning || clockSecondsRemaining != 0) return false
+
+        // 2. Períodos reglamentarios (1..4) → siempre permitidos
+        if (period in 1..4) return true
+
+        // 3. Prórrogas (5+) → solo si los equipos van empatados
+        return isTied
     }
 
     fun startGame(roostersHomeTeam: Int, rostersAwayTeam: Int): Boolean {

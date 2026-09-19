@@ -12,11 +12,11 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import luisitobez.jjvh.basket.ui.Screen.AddGame.AddGameScreen
-import luisitobez.jjvh.basket.ui.Screen.StartGame.StartGameScreen
 import luisitobez.jjvh.basket.ui.Screen.AddTeam.AddTeamScreen
 import luisitobez.jjvh.basket.ui.Screen.Game.GameScreen
 import luisitobez.jjvh.basket.ui.Screen.Principal.PrincipalScreen
 import luisitobez.jjvh.basket.ui.Screen.ProfileTeam.ProfileTeamScreen
+import luisitobez.jjvh.basket.ui.Screen.StartGame.StartGameScreen
 import luisitobez.jjvh.basket.ui.Screen.Team.TeamScreen
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)

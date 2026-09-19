@@ -61,6 +61,7 @@ import luisitobez.jjvh.basket.ui.theme.DarkBlue
 import luisitobez.jjvh.basket.ui.theme.PrimaryBlue
 import luisitobez.jjvh.basket.ui.theme.PrimaryOrange
 import androidx.compose.ui.graphics.Color
+import luisitobez.jjvh.basket.ui.core.navigation.AdBanner
 
 
 @AndroidEntryPoint
@@ -196,7 +197,8 @@ class MainActivity : ComponentActivity() {
                     }
                 ) {
                     Scaffold(
-                        modifier = Modifier.fillMaxSize(), topBar = {
+                        modifier = Modifier.fillMaxSize(),
+                        topBar = {
                             TopAppBar(
                                 colors = TopAppBarDefaults.topAppBarColors(
                                     containerColor = DarkBlue
@@ -216,7 +218,11 @@ class MainActivity : ComponentActivity() {
                                 },
                                 title = {},
                             )
-                        }) { innerPadding ->
+                        },
+                        bottomBar = {
+                            AdBanner()
+                        }
+                    ) { innerPadding ->
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()

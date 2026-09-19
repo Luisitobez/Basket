@@ -6,6 +6,7 @@ package luisitobez.jjvh.basket.ui.Screen.StartGame
 // ============================================================
 // [02] IMPORTS
 // ============================================================
+import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -36,12 +37,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import luisitobez.jjvh.basket.ui.core.navigation.InterstitialViewModel
 import luisitobez.jjvh.basket.ui.theme.AppBackColor
 import luisitobez.jjvh.basket.ui.theme.AppBlackTransparent
 import luisitobez.jjvh.basket.ui.theme.AppBorderShape
@@ -57,8 +61,17 @@ import luisitobez.jjvh.basket.ui.theme.PrimaryOrange
 // ============================================================
 @Composable
 fun StartGameScreen(
-    viewModel: StartGameViewModel = hiltViewModel(), onBack: () -> Unit, modifier: Modifier, id: Int
+    viewModel: StartGameViewModel = hiltViewModel(),
+    onBack: () -> Unit,
+    modifier: Modifier, id: Int,
+    interstitialViewModel: InterstitialViewModel = hiltViewModel()
 ) {
+
+    val context: Context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        interstitialViewModel.getInterstitialAd(context)
+    }
 
     // ========================================================
 // [04] ESTADO Y SCOPE
@@ -72,6 +85,14 @@ fun StartGameScreen(
 // ========================================================
     LaunchedEffect(id) {
         viewModel.loadGame(id)
+        interstitialViewModel.showAdWhenReady(context)
+    }
+
+    LaunchedEffect(uiState.error) {
+        if (uiState.error != null) {
+            delay(3_000)
+            viewModel.clearError()
+        }
     }
 
     // ========================================================
@@ -532,6 +553,7 @@ fun StartGameScreen(
                     // ====================================================
 // [22] FALTAS TÉCNICAS
 // ====================================================
+                    // FALTAS TÉCNICAS
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -544,7 +566,7 @@ fun StartGameScreen(
                             modifier = Modifier.weight(1f),
                             onClick = {
                                 viewModel.selectPlayerFor(
-                                    true, PendingAction(PendingActionType.FOUL)
+                                    true, PendingAction(PendingActionType.TECHNICAL_FOUL)   // 👈
                                 )
                             })
 
@@ -554,7 +576,7 @@ fun StartGameScreen(
                             modifier = Modifier.weight(1f),
                             onClick = {
                                 viewModel.selectPlayerFor(
-                                    false, PendingAction(PendingActionType.FOUL)
+                                    false, PendingAction(PendingActionType.TECHNICAL_FOUL)  // 👈
                                 )
                             })
                     }
@@ -611,6 +633,7 @@ fun StartGameScreen(
         DialogRosters(
             listOfRosters = uiState.dialogRoster,
             onDismiss = { viewModel.onChangeDialog(false) },
+            blockedIds = uiState.dialogBlockedRosterIds,
             onRosterSelected = viewModel::onRosterSelected
         )
     }

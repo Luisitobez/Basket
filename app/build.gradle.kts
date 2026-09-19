@@ -38,8 +38,32 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     buildFeatures {
         compose = true
+        buildConfig = true
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "src/main/keepRules/rules.keep"    // ← ruta corregida
+            )
+            buildConfigField("String", "INTERSECTIAL_AD_ID", "\"ca-app-pub-2205968475968384/7338995540\"")
+            buildConfigField("String", "BANNER_AD_ID", "\"ca-app-pub-2205968475968384/6624679675\"")
+        }
+        debug {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "src/main/keepRules/rules.keep"    // ← ruta corregida
+            )
+            buildConfigField("String", "INTERSECTIAL_AD_ID", "\"ca-app-pub-3940256099942544/1033173712\"")
+            buildConfigField("String", "BANNER_AD_ID", "\"ca-app-pub-3940256099942544/6300978111\"")
+        }
     }
 }
 
@@ -75,6 +99,8 @@ dependencies {
 
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)
+
+    implementation(libs.google.ads)
 }
 
 room {

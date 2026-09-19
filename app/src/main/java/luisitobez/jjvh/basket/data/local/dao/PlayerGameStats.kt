@@ -7,6 +7,7 @@ data class PlayerGameStats(
     val playerName: String,
     val jerseyNumber: Int,
     val points: Int,
-    val fouls: Int
+    val fouls: Int,
+    val technicalFouls: Int
 )
 

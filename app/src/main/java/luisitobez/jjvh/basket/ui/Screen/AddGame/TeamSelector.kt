@@ -1,21 +1,22 @@
 package luisitobez.jjvh.basket.ui.Screen.AddGame
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.SportsBasketball
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MenuAnchorType
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.material3.*
-import androidx.compose.material3.TextFieldDefaults.colors
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import luisitobez.jjvh.basket.domain.model.TeamModel
 import luisitobez.jjvh.basket.ui.theme.AppBorderShape
-import luisitobez.jjvh.basket.ui.theme.AppModifierTextFieldShape
-import luisitobez.jjvh.basket.ui.theme.AppSurface
 import luisitobez.jjvh.basket.ui.theme.AppTextFieldColors
 import luisitobez.jjvh.basket.ui.theme.AppTextPrimary
-import luisitobez.jjvh.basket.ui.theme.AppTextSecondary
 import luisitobez.jjvh.basket.ui.theme.PrimaryOrange
 
 @OptIn(ExperimentalMaterial3Api::class)

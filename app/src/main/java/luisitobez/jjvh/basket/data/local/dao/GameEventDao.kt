@@ -28,12 +28,14 @@ interface GameEventDao {
     /** Punto/faltas de cada jugador, calculados a partir de los eventos no anulados. */
     @Query(
         """SELECT r.game_id AS gameId, r.id AS rosterId, r.team_id AS teamId,
-            r.player_name AS playerName, r.jersey_number AS jerseyNumber,
-            COALESCE(SUM(CASE WHEN e.is_cancelled = 0 THEN e.points ELSE 0 END), 0) AS points,
-            COALESCE(SUM(CASE WHEN e.is_cancelled = 0 AND e.event_type = 'FOUL' THEN 1 ELSE 0 END), 0) AS fouls
-        FROM game_roster r LEFT JOIN game_event e ON e.roster_id = r.id
-        WHERE r.game_id = :gameId
-        GROUP BY r.id ORDER BY r.team_id, r.jersey_number"""
+        r.player_name AS playerName, r.jersey_number AS jerseyNumber,
+        COALESCE(SUM(CASE WHEN e.is_cancelled = 0 THEN e.points ELSE 0 END), 0) AS points,
+        COALESCE(SUM(CASE WHEN e.is_cancelled = 0 AND e.event_type = 'FOUL' THEN 1 ELSE 0 END), 0) AS fouls,
+        COALESCE(SUM(CASE WHEN e.is_cancelled = 0 AND e.event_type = 'TECHNICAL_FOUL' THEN 1 ELSE 0 END), 0) AS technicalFouls
+    FROM game_roster r LEFT JOIN game_event e ON e.roster_id = r.id
+    WHERE r.game_id = :gameId
+    GROUP BY r.id ORDER BY r.team_id, r.jersey_number"""
     )
     fun observePlayerStats(gameId: Long): Flow<List<PlayerGameStats>>
+
 }

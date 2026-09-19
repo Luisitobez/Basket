@@ -124,6 +124,14 @@ fun DialogTeamStats(
                         modifier = Modifier.width(45.dp),
                         textAlign = TextAlign.Center
                     )
+                    Text(
+                        text = "T",
+                        color = AppTextSecondary,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.width(45.dp),
+                        textAlign = TextAlign.Center
+                    )
                 }
 
                 Spacer(
@@ -202,6 +210,15 @@ fun DialogTeamStats(
                                     } else {
                                         AppTextPrimary
                                     },
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.width(45.dp),
+                                    textAlign = TextAlign.Center
+                                )
+
+                                Text(
+                                    text = player.technicalFouls.toString(),
+                                    color = if (player.technicalFouls >= 2) AppTextRed else AppTextPrimary,
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.Bold,
                                     modifier = Modifier.width(45.dp),

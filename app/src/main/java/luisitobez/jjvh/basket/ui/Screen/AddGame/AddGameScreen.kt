@@ -44,6 +44,7 @@ fun AddGameScreen(
     onAddGameClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val datePickerState = rememberDatePickerState()

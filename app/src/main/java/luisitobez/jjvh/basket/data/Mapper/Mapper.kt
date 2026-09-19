@@ -150,7 +150,8 @@ fun PlayerGameStatsModel.toEntity(): PlayerGameStats {
         playerName = playerName,
         jerseyNumber = jerseyNumber,
         points = points,
-        fouls = fouls
+        fouls = fouls,
+        technicalFouls = technicalFouls
     )
 }
 
@@ -162,7 +163,8 @@ fun PlayerGameStats.toDomain(): PlayerGameStatsModel {
         playerName = playerName,
         jerseyNumber = jerseyNumber,
         points = points,
-        fouls = fouls
+        fouls = fouls,
+        technicalFouls = technicalFouls
     )
 }
 

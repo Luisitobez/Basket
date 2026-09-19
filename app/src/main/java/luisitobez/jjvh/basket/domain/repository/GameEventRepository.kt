@@ -14,6 +14,7 @@ interface GameEventRepository {
     fun observeEvents(gameId: Long): Flow<List<GameEventModel>>
     suspend fun cancel(eventId: Long)
     suspend fun recordFoul(event: GameEventEntity): Long
+    suspend fun recordTechnicalFoul(event: GameEventEntity): Long
     fun observeScore(gameId: Long): Flow<GameScoreModel>
     fun observePlayerStats(gameId: Long): Flow<List<PlayerGameStatsModel>>
 

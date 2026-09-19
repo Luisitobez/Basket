@@ -33,7 +33,7 @@ abstract class MatchActionDao {
         insertEvent(event.copy(sequenceNumber = nextSequence(event.gameId)))
 
     /** Registra una falta individual y aumenta el contador colectivo del periodo. */
-    @Transaction
+    /*@Transaction
     open suspend fun recordFoul(event: GameEventEntity): Long {
         require(event.eventType == "FOUL") { "El evento debe ser FOUL" }
         val teamId = requireNotNull(event.teamId) { "Una falta requiere equipo" }
@@ -45,6 +45,34 @@ abstract class MatchActionDao {
         val eventId = record(event)
         val previous = foulCount(event.gameId, teamId, event.periodNumber) ?: 0
         saveTeamFoul(TeamPeriodFoulEntity(event.gameId, teamId, event.periodNumber, previous + 1))
+        return eventId
+    }*/
+
+    @Transaction
+    open suspend fun recordFoul(event: GameEventEntity): Long {
+        require(event.eventType == "FOUL") { "El evento debe ser FOUL" }
+        return recordTeamFoul(event)
+    }
+
+    @Transaction
+    open suspend fun recordTechnicalFoul(event: GameEventEntity): Long {
+        require(event.eventType == "TECHNICAL_FOUL") { "El evento debe ser TECHNICAL_FOUL" }
+        return recordTeamFoul(event)
+    }
+
+    private suspend fun recordTeamFoul(event: GameEventEntity): Long {
+        val teamId = requireNotNull(event.teamId) { "Una falta requiere equipo" }
+        event.rosterId?.let { rosterId ->
+            val player = requireNotNull(rosterById(rosterId)) { "Jugador inexistente" }
+            require(player.gameId == event.gameId && player.teamId == teamId) {
+                "El jugador no pertenece a este equipo/partido"
+            }
+        }
+        val eventId = record(event)
+        val previous = foulCount(event.gameId, teamId, event.periodNumber) ?: 0
+        saveTeamFoul(
+            TeamPeriodFoulEntity(event.gameId, teamId, event.periodNumber, previous + 1)
+        )
         return eventId
     }
 }
